@@ -1,6 +1,6 @@
 <div align="center">
 
-# 🎨 TCC UNIVAP 2025
+# TCC UNIVAP 2025
 
 ## Centralização e Automação de Demandas Criativas
 
@@ -23,7 +23,7 @@ Fundação Valeparaibana de Ensino — UNIVAP
 
 ---
 
-## 📌 Sobre o projeto
+## Sobre o projeto
 
 Este projeto foi desenvolvido para solucionar um problema presente no fluxo de trabalho de uma empresa de design: a dificuldade de **organizar, acompanhar e não perder solicitações de clientes**.
 
@@ -35,23 +35,7 @@ O resultado é um fluxo mais organizado, rastreável e integrado, desde o contat
 
 ---
 
-## ✨ Principais funcionalidades
-
-| Funcionalidade | Descrição |
-|---|---|
-| 📋 **Solicitações** | Cadastro, visualização, aprovação, rejeição e acompanhamento de demandas |
-| 💬 **Bot de WhatsApp** | Coleta informações do cliente e registra a solicitação automaticamente |
-| 👥 **Clientes** | Cadastro, consulta e gerenciamento de clientes |
-| 👤 **Usuários** | Login, autenticação e controle de acesso |
-| 📊 **Dashboard** | Indicadores e gráficos sobre as solicitações |
-| 🔄 **Automação** | Processamento e encaminhamento das demandas através do n8n |
-| 📌 **Trello** | Organização visual das demandas em fluxo Kanban |
-| 🗄️ **Banco de dados** | Armazenamento estruturado das informações utilizando MySQL |
-| 📝 **Histórico** | Registro e acompanhamento das alterações e etapas das solicitações |
-
----
-
-## 🔄 Como funciona?
+## Como funciona?
 
 O sistema integra diferentes ferramentas para automatizar o fluxo de uma demanda:
 
@@ -81,3 +65,49 @@ O sistema integra diferentes ferramentas para automatizar o fluxo de uma demanda
                         ↓
                  📊 Acompanhamento
                    da demanda
+```
+
+O cliente pode enviar uma solicitação por formulário ou pelo bot de WhatsApp. Os dados são processados pelas automações, registrados no banco de dados e encaminhados para organização e acompanhamento pela equipe.
+
+## Tecnologias utilizadas
+
+| 💻 Desenvolvimento | 🗄️ Banco de dados | ⚙️ Automação e integrações | 🖥️ Ambiente |
+|---|---|---|---|
+| **PHP**<br>Back-end | **MySQL / MariaDB** | **n8n**<br>Automação dos processos | **XAMPP** |
+| **JavaScript**<br>Funcionalidades e interações | | **Evolution API**<br>Integração com WhatsApp | **Apache** |
+| **HTML5**<br>Estrutura das páginas | | **Trello**<br>Gerenciamento das demandas | 
+| **CSS3**<br>Interface e estilização | | **ngrok**<br>Comunicação com serviços externos |
+| **MVC**<br>Organização arquitetural | | | |
+
+## Instalação
+
+As instruções completas para instalação e configuração do projeto estão disponíveis no:
+
+**[GUIA DE INSTALAÇÃO](docs/GUIA%20DE%20INSTALA%C3%87%C3%83O.txt)**
+
+## Utilização
+
+Após a instalação e configuração do projeto, a plataforma pode ser utilizada para **registrar, organizar e acompanhar as demandas criativas** da empresa.
+
+As solicitações podem ser recebidas por meio do **formulário web** ou do **bot de WhatsApp**, sendo processadas automaticamente e encaminhadas para o fluxo de gerenciamento.
+
+A equipe pode acompanhar as demandas pela plataforma, visualizando informações como:
+
+- 👤 Cliente
+- 📋 Solicitação
+- 📅 Prazo
+- 🔄 Status
+- 📝 Observações
+- 📊 Indicadores e acompanhamento das demandas
+
+O sistema também permite o gerenciamento das solicitações e o acompanhamento de seu andamento desde o recebimento até a conclusão.
+
+## Autores
+
+Projeto desenvolvido por:
+
+**Enzo Raphael Boquimpani de Moura Nascimento**  
+**Julia Senra Torres**  
+**Leonardo Martinelli de Oliveira Lima**
+ **Contatos:**  
+enzorapahelsjc@gmail.com · juliasenratorres@gmail.com · martinelliunivap@gmail.com
