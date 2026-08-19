@@ -1,0 +1,109 @@
+=========================================================================
+  MANUAL DE INSTALAÇÃO E CONFIGURAÇÃO - TCC
+=========================================================================
+TEMA: CENTRALIZAÇÃO E AUTOMAÇÃO DE DEMANDAS CRIATIVAS
+PLATAFORMA WEB PARA EFICIÊNCIA E RASTREABILIDADE
+
+AUTORES:
+- Enzo Raphael Boquimpani de Moura Nascimento 	CONTATO: enzorapahelsjc@gmail.com
+- Julia Senra Torres				CONTATO: juliasenrat@gmail.com
+- Leonardo Martinelli de Oliveira Lima		CONTATO : martinelliunivap@gmail.com
+
+=========================================================================
+  1. PRÉ-REQUISITOS E DEPENDÊNCIAS
+=========================================================================
+Para executar este projeto, você precisará de dois ambientes:
+A) AMBIENTE LOCAL (Seu Computador): Onde roda o site e o banco de dados.
+B) AMBIENTE NUVEM (VPS): Onde roda a automação (n8n e WhatsApp).
+
+SOFTWARES NECESSÁRIOS:
+1. XAMPP (Para servidor Apache e MySQL):
+   - Download: https://www.apachefriends.org/pt_br/index.html
+
+2. NGROK (Para conectar a internet ao seu computador local):
+   - Download: https://ngrok.com/
+
+3. VPS HOSTINGER (Já configurada com EasyPanel):
+   - Serviços ativos necessários: n8n e Evolution API.
+
+=========================================================================
+  2. CONFIGURAÇÃO DO AMBIENTE LOCAL (PC)
+=========================================================================
+
+PASSO 1: ARQUIVOS DO SISTEMA
+1. Instale o XAMPP.
+2. Vá até a pasta de instalação (Geralmente "C:\xampp\htdocs").
+3. Crie uma pasta chamada: "solicitacoes_mvc".
+4. Cole todos os arquivos do código fonte dentro desta pasta.
+
+PASSO 2: BANCO DE DADOS
+1. Abra o painel do XAMPP e clique em "Start" no Apache e no MySQL.
+2. No navegador, acesse: http://localhost/phpmyadmin
+3. Crie um banco de dados novo.
+   (Nota: Verifique o nome correto no arquivo de conexão PHP do projeto, ex: "solicitacoes_db").
+4. Selecione o banco criado e clique na aba "Importar".
+5. Escolha o arquivo "Banco_tcc.SQL" fornecido e execute.
+
+PASSO 3: CONEXÃO EXTERNA (NGROK)
+IMPORTANTE: O n8n (na nuvem) precisa "enxergar" seu computador.
+1. Abra o terminal ou CMD do seu computador.
+2. Digite o comando:
+   ngrok http 80
+3. Copie a URL HTTPS que aparecerá (Exemplo: https://xxxx-xx.ngrok-free.app).
+   -> GUARDE ESTA URL, ELA SERÁ USADA NA CONFIGURAÇÃO DO N8N.
+   -> NÃO FECHE A JANELA DO TERMINAL DO NGROK.
+
+=========================================================================
+  3. CONFIGURAÇÃO DA AUTOMAÇÃO (VPS/NUVEM)
+=========================================================================
+É necessário conhecimento básico em n8n para manipular os fluxos e configurar as credenciais.
+
+PASSO 1: EVOLUTION API (WHATSAPP)
+1. Acesse o EasyPanel na sua VPS.
+2. Abra a Evolution API e crie uma instância ("Instance").
+3. Leia o QR Code com o celular do projeto.
+4. Copie a "API Key" gerada.
+
+PASSO 2: API DO TRELLO (INTEGRAÇÃO)
+1. Acesse o painel de desenvolvedor do Trello: https://trello.com/power-ups/admin
+2. Crie uma nova integração (Power-Up) se ainda não houver.
+3. Gere a "API Key".
+4. Gere o "Token" (Você precisará autorizar manualmente).
+5. Guarde a API Key e o Token.
+
+PASSO 3: N8N (WORKFLOWS E CREDENCIAIS)
+1. Acesse o n8n na sua VPS.
+2. Vá em "Credentials" -> "New":
+   - Cadastre "Evolution API" (Use a key do Passo 1).
+   - Cadastre "Trello" (Use a API Key e Token do Passo 2).
+3. Vá em "Workflows" -> "Import from File" e carregue os arquivos .JSON do projeto.
+
+PASSO CRÍTICO (ATUALIZAR LINKS):
+1. Dentro dos fluxos do n8n, localize os nós do tipo "HTTP Request" que enviam dados para o site local.
+2. Você verá um link como: "http://localhost/solicitacoes_mvc/api/..."
+3. TROQUE o início do link pela URL do NGROK que você copiou.
+   - Exemplo Correto: "https://xxxx-xx.ngrok-free.app/solicitacoes_mvc/api/..."
+4. Salve e ative o Workflow.
+
+=========================================================================
+  4. COMO EXECUTAR (DIA A DIA)
+=========================================================================
+Para o sistema funcionar, siga esta ordem sempre que ligar o computador:
+
+1. Abra o XAMPP -> Inicie Apache e MySQL.
+2. Abra o Terminal -> Rode "ngrok http 80".
+   (Se o link mudar, lembre-se de atualizar no n8n).
+3. Abra o navegador e acesse o sistema:
+   http://localhost/solicitacoes_mvc/login.html
+
+=========================================================================
+  SOLUÇÃO DE PROBLEMAS COMUNS
+=========================================================================
+ERRO: O n8n dá erro ao criar card no Trello.
+SOLUÇÃO: Verifique se o ID da Lista (List ID) no nó do Trello está correto. Às vezes, ao mudar de quadro, o ID da lista muda.
+
+ERRO: O n8n dá erro de conexão ou timeout com o site.
+SOLUÇÃO: Verifique se o terminal do Ngrok está aberto. Se fechou, o link mudou e você deve atualizar no n8n.
+
+ERRO: Banco de dados não conecta.
+SOLUÇÃO: Verifique "conexao.php". Padrão XAMPP -> User: root, Senha: (vazio).
