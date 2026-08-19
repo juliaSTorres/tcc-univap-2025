@@ -1,0 +1,138 @@
+{
+  "name": "Apagar-Card",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "deletar-card",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "22c6a91f-e339-4366-92b8-de11ac518f0a",
+      "name": "Webhook",
+      "webhookId": "7d4d3591-19bb-4d96-a5d1-36d9bfffdc48"
+    },
+    {
+      "parameters": {
+        "operation": "delete",
+        "id": {
+          "__rl": true,
+          "value": "={{ $json.body.id_card_trello }}",
+          "mode": "id"
+        }
+      },
+      "type": "n8n-nodes-base.trello",
+      "typeVersion": 1,
+      "position": [
+        784,
+        0
+      ],
+      "id": "3357f518-a8c2-41b6-a1ca-d693c8ed572c",
+      "name": "Delete a card",
+      "credentials": {
+        "trelloApi": {
+          "id": "iwnfHSRANh4dBsed",
+          "name": "Trello account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "{\n  \"status\": \"deletado\"\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [
+        1168,
+        0
+      ],
+      "id": "7edef2e0-78da-4dd1-8b6b-7889fa4c848e",
+      "name": "Respond to Webhook"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "0348d232-72ee-4c35-82be-37f082db2447",
+              "name": "body.id_card_trello",
+              "value": "={{ $json.body.id_card_trello }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        320,
+        0
+      ],
+      "id": "b42a245a-d2be-4f31-b50c-9e99e3f10a14",
+      "name": "Edit Fields"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Delete a card": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Delete a card",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "65e4e6db-057b-481a-bc81-823cc3a04ff1",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "6b305a80a5187e2b6854af9a2913f91761217b913e9306fbccc703124236b512"
+  },
+  "id": "3kcgljFfLA9dXkjA",
+  "tags": [
+    {
+      "createdAt": "2025-07-29T20:56:11.852Z",
+      "updatedAt": "2025-07-29T20:56:11.852Z",
+      "id": "J6QNO6qDuMb8V4Jm",
+      "name": "TCC"
+    }
+  ]
+}

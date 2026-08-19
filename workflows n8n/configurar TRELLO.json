@@ -1,0 +1,262 @@
+{
+  "name": "configurar TRELLO",
+  "nodes": [
+    {
+      "parameters": {
+        "resource": "list",
+        "operation": "getAll",
+        "id": "={{ $json.body.boardId }}",
+        "returnAll": true,
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.trello",
+      "typeVersion": 1,
+      "position": [
+        -960,
+        -16
+      ],
+      "id": "d6100db3-3b41-4266-a1eb-c57bb56722ff",
+      "name": "Get many lists",
+      "credentials": {
+        "trelloApi": {
+          "id": "iwnfHSRANh4dBsed",
+          "name": "Trello account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "5b1f5c0f-69e6-4374-812b-0dcbd6002619",
+              "name": "id",
+              "value": "={{ $json.id }}",
+              "type": "string"
+            },
+            {
+              "id": "e4d0b66f-4c3e-4228-b6f1-a4bbf591e43d",
+              "name": "name",
+              "value": "={{ $json.name }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -704,
+        -16
+      ],
+      "id": "dedcff6c-a175-4d02-a24d-a9399ed05aab",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "respondWith": "allIncomingItems",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [
+        -80,
+        -32
+      ],
+      "id": "04b582f1-a8f8-4fdd-ac94-90e9ad166cfe",
+      "name": "Respond to Webhook"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "pegar-listas",
+        "responseMode": "responseNode",
+        "options": {
+          "allowedOrigins": "*"
+        }
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -1136,
+        -16
+      ],
+      "id": "54be3e83-868b-4e2c-9ee4-9b70d5bcb748",
+      "name": "Webhook",
+      "webhookId": "97a40e4f-4df6-4154-90fb-07b913702351"
+    },
+    {
+      "parameters": {
+        "jsCode": "let resultado = [];\n\nfor (let i = 0; i < items.length; i++) {\n  resultado.push(items[i].json);\n}\n\nreturn [\n  {\n    json: {\n      dados: resultado\n    }\n  }\n];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -480,
+        -16
+      ],
+      "id": "23840e84-8060-4c5b-b50c-10bca5852b0d",
+      "name": "Code"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "atualizar-dados",
+        "options": {
+          "allowedOrigins": "*"
+        }
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -1136,
+        288
+      ],
+      "id": "ed509b09-8657-4c44-983a-f7c2013e2659",
+      "name": "Webhook1",
+      "webhookId": "49dd5a0f-e251-465b-bfb3-c3dd9b5fc9d5"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "INSERT INTO trello_configurations (id, board_id, list_design_id, list_video_id, list_finished_id, adjustment_list_id, approved_list_id) \nVALUES (1, '{{ $json[\"body\"][\"boardId\"] }}', '{{ $json[\"body\"][\"designListId\"] }}', '{{ $json[\"body\"][\"videoListId\"] }}', '{{ $json[\"body\"][\"finishedListId\"] }}', '{{ $json[\"body\"][\"adjustmentListId\"] }}', '{{ $json[\"body\"][\"approvedListId\"] }}') \nON DUPLICATE KEY UPDATE \nboard_id = VALUES(board_id), \nlist_design_id = VALUES(list_design_id), \nlist_video_id = VALUES(list_video_id), \nlist_finished_id = VALUES(list_finished_id), \nadjustment_list_id = VALUES(adjustment_list_id),\napproved_list_id = VALUES(approved_list_id);",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.mySql",
+      "typeVersion": 2.4,
+      "position": [
+        -848,
+        288
+      ],
+      "id": "411d0481-a6c4-4ea6-8dfb-6e662a68077f",
+      "name": "Execute a SQL query",
+      "credentials": {
+        "mySql": {
+          "id": "eHBb7SGQq9KSA7SC",
+          "name": "TCC ATUALIZADO"
+        }
+      }
+    }
+  ],
+  "pinData": {
+    "Webhook1": [
+      {
+        "json": {
+          "headers": {
+            "host": "sistema-crescer-n8n.vuvd0x.easypanel.host",
+            "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36",
+            "content-length": "195",
+            "accept": "*/*",
+            "accept-encoding": "gzip, deflate, br, zstd",
+            "accept-language": "pt-BR,pt;q=0.9,en-US;q=0.8,en;q=0.7",
+            "cache-control": "no-cache",
+            "content-type": "application/json",
+            "origin": "http://localhost",
+            "pragma": "no-cache",
+            "priority": "u=1, i",
+            "referer": "http://localhost/",
+            "sec-ch-ua": "\"Google Chrome\";v=\"141\", \"Not?A_Brand\";v=\"8\", \"Chromium\";v=\"141\"",
+            "sec-ch-ua-mobile": "?0",
+            "sec-ch-ua-platform": "\"Windows\"",
+            "sec-fetch-dest": "empty",
+            "sec-fetch-mode": "cors",
+            "sec-fetch-site": "cross-site",
+            "x-forwarded-for": "191.19.200.219",
+            "x-forwarded-host": "sistema-crescer-n8n.vuvd0x.easypanel.host",
+            "x-forwarded-port": "443",
+            "x-forwarded-proto": "https",
+            "x-forwarded-server": "4b3b96a4fe4b",
+            "x-real-ip": "191.19.200.219"
+          },
+          "params": {},
+          "query": {},
+          "body": {
+            "boardId": "2pdypkfN",
+            "designListId": "685ab43e7e4132b1b1aa0c38",
+            "videoListId": "685da9cdfbc22fd07cc77968",
+            "finishedListId": "685ab47e223dee2ac54c97cf",
+            "adjustmentListId": "6891e535781dba6c9e7a7e30"
+          },
+          "webhookUrl": "https://sistema-crescer-n8n.vuvd0x.easypanel.host/webhook/atualizar-dados",
+          "executionMode": "production"
+        }
+      }
+    ]
+  },
+  "connections": {
+    "Get many lists": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Get many lists",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook1": {
+      "main": [
+        [
+          {
+            "node": "Execute a SQL query",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "6e4ff61f-8e4b-4d18-ac17-5177901abf4b",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "6b305a80a5187e2b6854af9a2913f91761217b913e9306fbccc703124236b512"
+  },
+  "id": "irAjaFOS3gWGNUDI",
+  "tags": [
+    {
+      "createdAt": "2025-07-29T20:56:11.852Z",
+      "updatedAt": "2025-07-29T20:56:11.852Z",
+      "id": "J6QNO6qDuMb8V4Jm",
+      "name": "TCC"
+    }
+  ]
+}

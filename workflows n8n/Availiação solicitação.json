@@ -1,0 +1,542 @@
+{
+  "name": "Availiação solicitação",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "approve_solicitacao",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -32,
+        -96
+      ],
+      "id": "a366337b-12f8-4c77-be9f-820f0a871f13",
+      "name": "Webhook",
+      "webhookId": "f8efc6f1-9cb3-4668-8f88-631b2395c678"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "request-ajuste",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -32,
+        192
+      ],
+      "id": "2c8baf3f-06b5-4735-89a7-254fca21bd2c",
+      "name": "Webhook1",
+      "webhookId": "f8efc6f1-9cb3-4668-8f88-631b2395c678"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "29e4476c-7e6b-45b8-9375-cb78035e3679",
+              "name": "id_card",
+              "value": "={{ $json.body.trello_card_id }}",
+              "type": "string"
+            },
+            {
+              "id": "18fc71d5-5648-49f3-825e-834a7e91c6ec",
+              "name": "motivo_reprovacao",
+              "value": "={{ $json.body.motivo_reprovacao }}",
+              "type": "string"
+            },
+            {
+              "id": "5106b84d-fb99-4281-b2f1-5d1f97d7e343",
+              "name": "nome_solicitante",
+              "value": "={{ $json.body.solicitante }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        176,
+        192
+      ],
+      "id": "4f1b57aa-b2b0-4ebe-9a2f-85c4d43e333a",
+      "name": "Dados"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "id": {
+          "__rl": true,
+          "value": "={{ $('Dados').item.json.id_card }}",
+          "mode": "id"
+        },
+        "updateFields": {
+          "desc": "=------- 🚨AJUSTE🚨 --------\n\n{{ $('Dados').item.json.motivo_reprovacao }}\n\n----------------------------\n\n{{ $json.desc }}\n\n\n",
+          "idList": "={{ $('Select rows from a table').item.json.adjustment_list_id }}"
+        }
+      },
+      "type": "n8n-nodes-base.trello",
+      "typeVersion": 1,
+      "position": [
+        1280,
+        192
+      ],
+      "id": "b8b3e2e9-b59d-4119-b6e7-19b0a1b003c9",
+      "name": "Update a card",
+      "credentials": {
+        "trelloApi": {
+          "id": "iwnfHSRANh4dBsed",
+          "name": "Trello account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "select",
+        "table": {
+          "__rl": true,
+          "value": "trello_configurations",
+          "mode": "list",
+          "cachedResultName": "trello_configurations"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.mySql",
+      "typeVersion": 2.5,
+      "position": [
+        416,
+        192
+      ],
+      "id": "ed4428bd-7991-4d9e-a897-b98901f091e5",
+      "name": "Select rows from a table",
+      "credentials": {
+        "mySql": {
+          "id": "eHBb7SGQq9KSA7SC",
+          "name": "TCC ATUALIZADO"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "e299711d-3dd9-484e-a4ef-2380a041ad82",
+              "name": "lista_ajuste",
+              "value": "={{ $json.adjustment_list_id }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        704,
+        192
+      ],
+      "id": "1e54e12e-d91b-4323-b0f9-5060fd1967bd",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "ce483245-22ce-489a-a885-27d87b442e1a",
+              "name": "id_card",
+              "value": "={{ $json.body.trello_card_id }}",
+              "type": "string"
+            },
+            {
+              "id": "7406fa40-d850-4579-bc90-2a7d52bfa4f9",
+              "name": "id_solicitacao",
+              "value": "={{ $json.body.solicitacao_id }}",
+              "type": "number"
+            },
+            {
+              "id": "763825eb-d2d6-4666-994e-c444571af6ed",
+              "name": "tipo_pedido",
+              "value": "={{ $json.body.tipo_pedido }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        192,
+        -96
+      ],
+      "id": "e6a06344-43b8-4c2e-882f-8684a08e84f9",
+      "name": "Edit Fields1"
+    },
+    {
+      "parameters": {
+        "operation": "select",
+        "table": {
+          "__rl": true,
+          "value": "trello_configurations",
+          "mode": "list",
+          "cachedResultName": "trello_configurations"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.mySql",
+      "typeVersion": 2.5,
+      "position": [
+        416,
+        -96
+      ],
+      "id": "4f1bfbbc-1723-401a-978c-a09795040685",
+      "name": "Select rows from a table1",
+      "credentials": {
+        "mySql": {
+          "id": "eHBb7SGQq9KSA7SC",
+          "name": "TCC ATUALIZADO"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "e906050d-e4b4-4fe2-8fe5-26ae7c1b0e34",
+              "name": "approved_list_id",
+              "value": "={{ $json.approved_list_id }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        720,
+        -96
+      ],
+      "id": "b11e3eb3-7268-480a-9868-2f72da565980",
+      "name": "Edit Fields2"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "id": {
+          "__rl": true,
+          "value": "={{ $('Edit Fields1').item.json.id_card }}",
+          "mode": "id"
+        },
+        "updateFields": {
+          "idList": "={{ $json.approved_list_id }}"
+        }
+      },
+      "type": "n8n-nodes-base.trello",
+      "typeVersion": 1,
+      "position": [
+        1168,
+        -96
+      ],
+      "id": "97b01c77-4129-46b4-89b5-c95333ceb385",
+      "name": "Update a card1",
+      "credentials": {
+        "trelloApi": {
+          "id": "iwnfHSRANh4dBsed",
+          "name": "Trello account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "de217382-3bfc-4c0d-afd3-bf719dc044cf",
+              "leftValue": "={{ $('Edit Fields1').item.json.tipo_pedido }}",
+              "rightValue": "design",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1344,
+        -96
+      ],
+      "id": "257c4c5f-e4ba-4324-8589-d9ba19247354",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "table": {
+          "__rl": true,
+          "value": "solicitacoes_design",
+          "mode": "list",
+          "cachedResultName": "solicitacoes_design"
+        },
+        "dataMode": "defineBelow",
+        "columnToMatchOn": "id",
+        "valueToMatchOn": "={{ $('Edit Fields1').item.json.id_solicitacao }}",
+        "valuesToSend": {
+          "values": [
+            {
+              "column": "status_interno",
+              "value": "Finalizado"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.mySql",
+      "typeVersion": 2.5,
+      "position": [
+        1648,
+        -208
+      ],
+      "id": "70ac998d-3b05-4f5e-90b1-87196ee55299",
+      "name": "Update rows in a table",
+      "credentials": {
+        "mySql": {
+          "id": "eHBb7SGQq9KSA7SC",
+          "name": "TCC ATUALIZADO"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "table": {
+          "__rl": true,
+          "value": "solicitacoes_video",
+          "mode": "list",
+          "cachedResultName": "solicitacoes_video"
+        },
+        "dataMode": "defineBelow",
+        "columnToMatchOn": "id",
+        "valueToMatchOn": "={{ $('Edit Fields1').item.json.id_solicitacao }}",
+        "valuesToSend": {
+          "values": [
+            {
+              "column": "status_interno",
+              "value": "Finalizado"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.mySql",
+      "typeVersion": 2.5,
+      "position": [
+        1632,
+        -16
+      ],
+      "id": "d927b008-adb2-4626-b3f3-e0bcd03c6a70",
+      "name": "Update rows in a table1",
+      "credentials": {
+        "mySql": {
+          "id": "eHBb7SGQq9KSA7SC",
+          "name": "TCC ATUALIZADO"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "id": {
+          "__rl": true,
+          "value": "={{ $('Dados').item.json.id_card }}",
+          "mode": "id"
+        },
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.trello",
+      "typeVersion": 1,
+      "position": [
+        1008,
+        192
+      ],
+      "id": "7a3b453e-fd08-4cea-aae6-f159d3a19b6e",
+      "name": "Get a card",
+      "credentials": {
+        "trelloApi": {
+          "id": "iwnfHSRANh4dBsed",
+          "name": "Trello account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook1": {
+      "main": [
+        [
+          {
+            "node": "Dados",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Dados": {
+      "main": [
+        [
+          {
+            "node": "Select rows from a table",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Select rows from a table": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Get a card",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields1": {
+      "main": [
+        [
+          {
+            "node": "Select rows from a table1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Select rows from a table1": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields2": {
+      "main": [
+        [
+          {
+            "node": "Update a card1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update a card1": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Update rows in a table",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Update rows in a table1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get a card": {
+      "main": [
+        [
+          {
+            "node": "Update a card",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "dda10fa4-8644-45d3-8b6e-a6a5851cf144",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "6b305a80a5187e2b6854af9a2913f91761217b913e9306fbccc703124236b512"
+  },
+  "id": "0K7P5CKqGbGSYJBc",
+  "tags": [
+    {
+      "createdAt": "2025-07-29T20:56:11.852Z",
+      "updatedAt": "2025-07-29T20:56:11.852Z",
+      "id": "J6QNO6qDuMb8V4Jm",
+      "name": "TCC"
+    }
+  ]
+}

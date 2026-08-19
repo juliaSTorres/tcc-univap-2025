@@ -1,0 +1,272 @@
+{
+  "name": "Cadastrar Pedido Design",
+  "nodes": [
+    {
+      "parameters": {
+        "inputSource": "jsonExample",
+        "jsonExample": "{\n  \"id_cliente\": \"Id do cliente\",\n  \"nome\": \"Nome do Cliente\",\n  \"numero_cliente\": \"Número do Cliente\",\n  \"email_cliente\": \"Email do Cliente\",\n  \"ministerio\": \"Ministério do Cliente\",\n  \"tipo_pedido\": \"design\",\n    \"texto_fundamental\": \"Aqui entra o texto principal ou detalhes essenciais para o design.\",\n    \"data_evento\": \"AAAA-MM-DD\",\n    \"data_entrega_arte\": \"AAAA-MM-DD\",\n    \"uso_e_objetivo_arte\": \"Ex: Divulgar evento X, usar em redes sociais para engajamento.\",\n    \"publico_alcancado\": \"Ex: Membros da igreja, público jovem, visitantes.\",\n    \"imagem_referencia\": \"Link para imagem de referência ou descrição (Ex: Anexar no e-mail)\",\n    \"formatos_entrega\": \"\",\n    \"arquivos_necessarios\": \"\",\n    \"email_aprovacao_orcamento\": \"email_financeiro@exemplo.com\",\n    \"link_qr_code\": \"https://link.para.qrcode.com\",\n    \"observacoes_complementares\": \"Qualquer observação adicional sobre o projeto.\"\n}"
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -208,
+        0
+      ],
+      "id": "fe5dc7ce-ff7c-42f6-8a10-c1a862914435",
+      "name": "When Executed by Another Workflow"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "INSERT INTO solicitacoes_design (\n    cliente_id,\n    ministerio,\n    status,\n    texto_fundamental,\n    data_evento,\n    data_entrega_arte,\n    uso_e_objetivo_arte,\n    publico_alcancado,\n    imagem_referencia,\n    formatos_entrega,\n    arquivos_necessarios,\n    email_aprovacao_orcamento,\n    link_qr_code,\n    observacoes_complementares\n) VALUES (\n    {{$json.id}}, \n    '{{ $('dados completos').item.json.ministerio }}',\n    'pendente',\n    '{{ $('dados completos').item.json.texto_fundamental }}',\n   {{ $json.data_evento ? '${$json.data_evento}' : 'NULL' }},\n    '{{ $('dados completos').item.json.data_entrega_arte }}',\n    '{{ $('dados completos').item.json.uso_e_objetivo_arte }}',\n    '{{ $('dados completos').item.json.publico_alcancado }}',\n    '{{ $('dados completos').item.json.imagem_referencia }}',\n    '{{ ($('dados completos').item.json.formatos_entrega) }}',\n    '{{ ($('dados completos').item.json.arquivos_necessarios) }}',\n    '{{ $('dados completos').item.json.email_aprovacao_orcamento }}',\n    '{{ $('dados completos').item.json.link_qr_code }}',\n    '{{ $('dados completos').item.json.observacoes_complementares }}'\n);",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.mySql",
+      "typeVersion": 2.4,
+      "position": [
+        1040,
+        -16
+      ],
+      "id": "73a86a04-63e7-47e1-a5c2-066fd5851e1a",
+      "name": "Execute a SQL query",
+      "credentials": {
+        "mySql": {
+          "id": "eHBb7SGQq9KSA7SC",
+          "name": "TCC ATUALIZADO"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT id\nFROM clientes\nWHERE numero_cliente = {{ $('dados completos').item.json.numero_cliente }}",
+        "options": {
+          "detailedOutput": false
+        }
+      },
+      "type": "n8n-nodes-base.mySql",
+      "typeVersion": 2.4,
+      "position": [
+        752,
+        0
+      ],
+      "id": "bc9a0c2b-4c48-412f-9fa6-7cd96a76e2cb",
+      "name": "Execute a SQL query1",
+      "alwaysOutputData": true,
+      "credentials": {
+        "mySql": {
+          "id": "eHBb7SGQq9KSA7SC",
+          "name": "TCC ATUALIZADO"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "3191c560-791b-497c-8cf6-3e1f95b9c29f",
+              "name": "nome",
+              "value": "={{ $json.nome }}",
+              "type": "string"
+            },
+            {
+              "id": "73cbb2f8-66a7-44c2-9c88-7b1207688a1f",
+              "name": "numero_cliente",
+              "value": "={{ $json.numero_cliente }}",
+              "type": "string"
+            },
+            {
+              "id": "cc407cbb-733d-421a-8312-ec8704f2cf8d",
+              "name": "email_cliente",
+              "value": "={{ $json.email_cliente }}",
+              "type": "string"
+            },
+            {
+              "id": "efb308b8-3b64-432d-8d16-486d304fe35e",
+              "name": "ministerio",
+              "value": "={{ $json.ministerio }}",
+              "type": "string"
+            },
+            {
+              "id": "71d2d1bd-7f65-4489-abd4-42dbbb3325e8",
+              "name": "texto_fundamental",
+              "value": "={{ $json.texto_fundamental }}",
+              "type": "string"
+            },
+            {
+              "id": "fb5956a1-28ec-428b-b54c-9fcd09435215",
+              "name": "data_evento",
+              "value": "={{ $json.data_evento }}",
+              "type": "string"
+            },
+            {
+              "id": "ddef2d9a-b3d1-4f49-82fe-e84194e92001",
+              "name": "data_entrega_arte",
+              "value": "={{ $json.data_entrega_arte }}",
+              "type": "string"
+            },
+            {
+              "id": "002d2b86-b203-4bbc-8330-10688d8b527f",
+              "name": "uso_e_objetivo_arte",
+              "value": "={{ $json.uso_e_objetivo_arte }}",
+              "type": "string"
+            },
+            {
+              "id": "857cbc76-63cd-4653-a2a0-cd95f88dddee",
+              "name": "publico_alcancado",
+              "value": "={{ $json.publico_alcancado }}",
+              "type": "string"
+            },
+            {
+              "id": "8a4bb2b3-738e-41ed-ad27-6285d5d2ef15",
+              "name": "imagem_referencia",
+              "value": "={{ $json.imagem_referencia }}",
+              "type": "string"
+            },
+            {
+              "id": "e11d3a1e-6c18-4341-b95c-4964a1b011ff",
+              "name": "formatos_entrega",
+              "value": "=[{{ $json.formatos_entrega }}]",
+              "type": "string"
+            },
+            {
+              "id": "34d02ca1-8e95-4dd3-8426-7cf1a8d0e01b",
+              "name": "arquivos_necessarios",
+              "value": "=[{{ $json.arquivos_necessarios }}]",
+              "type": "string"
+            },
+            {
+              "id": "297dd0b5-f15c-4b6a-ae10-e5c2b6cf1bf3",
+              "name": "email_aprovacao_orcamento",
+              "value": "={{ $json.email_aprovacao_orcamento }}",
+              "type": "string"
+            },
+            {
+              "id": "803c9b4e-0743-45cb-bfab-51a24062f7e3",
+              "name": "link_qr_code",
+              "value": "={{ $json.link_qr_code }}",
+              "type": "string"
+            },
+            {
+              "id": "30e35b08-d2ab-4cce-b98e-7cf83bbe92e2",
+              "name": "observacoes_complementares",
+              "value": "={{ $json.observacoes_complementares }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        80,
+        0
+      ],
+      "id": "4fd66e3c-255d-4e56-9c6f-cfd06fee5079",
+      "name": "dados completos"
+    },
+    {
+      "parameters": {
+        "jsCode": "return items.map(item => { item.json.data_evento = item.json.data_evento || null; return item; });"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        384,
+        0
+      ],
+      "id": "13297279-2f7b-4b18-b0a2-c128634da70f",
+      "name": "Code"
+    }
+  ],
+  "pinData": {
+    "When Executed by Another Workflow": [
+      {
+        "json": {
+          "id_cliente": null,
+          "nome": "Julia Torres",
+          "numero_cliente": "5512988881363",
+          "email_cliente": "juliasenratorres@gmail.com",
+          "ministerio": "Mídia ",
+          "tipo_pedido": "Desing",
+          "texto_fundamental": "On Fire - 03/11 Esperamos por vocês!",
+          "data_evento": "2025-11-03 20:00:00",
+          "data_entrega_arte": "2025-10-31 15:00:00",
+          "uso_e_objetivo_arte": "A arte será usada para divulgar a celebração On Fire",
+          "publico_alcancado": "Jonvens, Voltz",
+          "imagem_referencia": "/solicitacoes_mvc/public/uploads/68fa05d88a914_IMG_9426 - Julia Senra Torres.jpeg",
+          "formatos_entrega": "FEED 1080x1080 px, STORIES 1080x1920 px, TELÃO CENTRAL (AUDITÓRIO PRINCIPAL) 3072x768 px",
+          "email_aprovacao_orcamento": "juliasenratorres@gmail.com",
+          "link_qr_code": "",
+          "observacoes_complementares": "A arte deve conter elementos como fogo "
+        }
+      }
+    ]
+  },
+  "connections": {
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "dados completos",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Execute a SQL query1": {
+      "main": [
+        [
+          {
+            "node": "Execute a SQL query",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "dados completos": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "Execute a SQL query1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "f50a67e5-38b1-4a67-bc86-6ddbbb75de8d",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "6b305a80a5187e2b6854af9a2913f91761217b913e9306fbccc703124236b512"
+  },
+  "id": "Tt1hIR7131AvWv4h",
+  "tags": [
+    {
+      "createdAt": "2025-07-29T20:56:11.852Z",
+      "updatedAt": "2025-07-29T20:56:11.852Z",
+      "id": "J6QNO6qDuMb8V4Jm",
+      "name": "TCC"
+    }
+  ]
+}

@@ -1,0 +1,83 @@
+{
+  "name": "Cadastrar Cliente",
+  "nodes": [
+    {
+      "parameters": {
+        "workflowInputs": {
+          "values": [
+            {
+              "name": "numero"
+            },
+            {
+              "name": "nome"
+            },
+            {
+              "name": "email"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -336,
+        64
+      ],
+      "id": "4446a330-f677-4c49-b4e9-7f72c4008887",
+      "name": "When Executed by Another Workflow"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "INSERT INTO clientes (nome, numero_cliente, email_cliente)\nVALUES ('{{ $json.nome }}', '{{ $json.numero }}', '{{ $json.email }}' );",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.mySql",
+      "typeVersion": 2.4,
+      "position": [
+        -112,
+        64
+      ],
+      "id": "60c995fa-dd55-495c-bb14-dbac6e33359a",
+      "name": "Execute a SQL query1",
+      "credentials": {
+        "mySql": {
+          "id": "eHBb7SGQq9KSA7SC",
+          "name": "TCC ATUALIZADO"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "Execute a SQL query1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "49d3b33b-8cd3-4565-bd76-ecfcb47aa19c",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "6b305a80a5187e2b6854af9a2913f91761217b913e9306fbccc703124236b512"
+  },
+  "id": "0ycc6Y99Vvj6bGOT",
+  "tags": [
+    {
+      "createdAt": "2025-07-29T20:56:11.852Z",
+      "updatedAt": "2025-07-29T20:56:11.852Z",
+      "id": "J6QNO6qDuMb8V4Jm",
+      "name": "TCC"
+    }
+  ]
+}

@@ -1,0 +1,2518 @@
+{
+  "name": "Cadastrar pedido via FORMS",
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "documentId": {
+          "__rl": true,
+          "value": "10V4oSmTHjdBXYJbh-R_c2pv8IHMujoVHrhx0uHJ7cLg",
+          "mode": "list",
+          "cachedResultName": "Solicitacoes",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/10V4oSmTHjdBXYJbh-R_c2pv8IHMujoVHrhx0uHJ7cLg/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 969923724,
+          "mode": "list",
+          "cachedResultName": "Respostas ao formulário 1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/10V4oSmTHjdBXYJbh-R_c2pv8IHMujoVHrhx0uHJ7cLg/edit#gid=969923724"
+        },
+        "event": "rowAdded",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTrigger",
+      "typeVersion": 1,
+      "position": [
+        -256,
+        0
+      ],
+      "id": "964afe79-acee-422f-a00c-40b6f810225a",
+      "name": "Google Sheets Trigger",
+      "credentials": {
+        "googleSheetsTriggerOAuth2Api": {
+          "id": "DIKG9lnkUWNIjhdn",
+          "name": "Housinho"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json['EM QUAL ÁREA PODEMOS TE SERVIR?'] }}",
+                    "rightValue": "Video",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "43420286-e6e5-4645-bcf2-7d1b7b1d2d73"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Video"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "292cee8b-699f-4788-9334-4084dff4af36",
+                    "leftValue": "={{ $json['EM QUAL ÁREA PODEMOS TE SERVIR?'] }}",
+                    "rightValue": "Desing",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Design"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        -48,
+        0
+      ],
+      "id": "6886ac13-07db-435d-865f-421ffc6254f5",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "375bb7dd-6af0-4107-836b-c32e9a57cb4b",
+              "name": "Nome",
+              "value": "={{ $json['SEU NOME'] }}",
+              "type": "string"
+            },
+            {
+              "id": "c2052264-899e-4c5d-9ca6-9ed93a47ef4a",
+              "name": "Ministério",
+              "value": "={{ $json['SEU MINISTÉRIO'] }}",
+              "type": "string"
+            },
+            {
+              "id": "9f46cef1-f207-4c4e-ba79-c07064921328",
+              "name": "Numero com DD",
+              "value": "={{ $json['NUMERO COM DD'] }}",
+              "type": "string"
+            },
+            {
+              "id": "7b0ec9c0-2935-419e-a710-39d755778df5",
+              "name": "Email",
+              "value": "={{ $json.EMAIL }}",
+              "type": "string"
+            },
+            {
+              "id": "8dde34c8-ad7b-4e1a-abe6-3354e2c6d36d",
+              "name": "Escolha",
+              "value": "={{ $json['EM QUAL ÁREA PODEMOS TE SERVIR?'] }}",
+              "type": "string"
+            },
+            {
+              "id": "a63b253d-4f64-4fe3-9f53-8e42319621c3",
+              "name": "Titulo do vídeo",
+              "value": "={{ $json['TÍTULO DO VÍDEO'] }}",
+              "type": "string"
+            },
+            {
+              "id": "dd7ce1b6-4f6e-4177-8fd7-db26cf839e34",
+              "name": "Tempo de duração do vídeo",
+              "value": "={{ $json['TEMPO DE DURAÇÃO DO VÍDEO'] }}",
+              "type": "string"
+            },
+            {
+              "id": "aaadb71c-35a1-45fc-9627-7b0acbca8e0d",
+              "name": "Onde passara o vídeo",
+              "value": "={{ $json['ESSE VÍDEO IRÁ PASSAR ONDE?'] }}",
+              "type": "string"
+            },
+            {
+              "id": "96b3e224-56b5-456c-9cae-7d975d4c0dc3",
+              "name": "Data entrega vídeo",
+              "value": "={{\n  (() => {\n    const input = $('Google Sheets Trigger').item.json['PARA QUANDO SERÁ?']; // Ex: \"13/08/2025 12:00:00\"\n    const [date, time] = input.split(\" \");\n    const [day, month, year] = date.split(\"/\");\n    return `${year}-${month}-${day} ${time}`;\n  })()\n}}",
+              "type": "string"
+            },
+            {
+              "id": "3cf6a545-29b8-4fc6-bb99-d67c3bb83cfb",
+              "name": "Referencia vídeo",
+              "value": "={{ $json['VOCÊ TEM ALGUMA REFERÊNCIA? (Coloque o link do vídeo)'] }}",
+              "type": "string"
+            },
+            {
+              "id": "f5679981-ae93-4d70-9b0d-ec0f307fbdec",
+              "name": "Publico alvo vídeo",
+              "value": "={{ $json['DESCREVA O PÚBLICO ALVO DO VÍDEO'] }}",
+              "type": "string"
+            },
+            {
+              "id": "2a13de22-fc78-4098-a096-1672df1cd45e",
+              "name": "Fonte imagens",
+              "value": "={{ $json['FONTE DE IMAGENS'] }}",
+              "type": "string"
+            },
+            {
+              "id": "d53ebc94-78f9-402e-9cb7-9a0df98e5cba",
+              "name": "Roteiro Vídeo",
+              "value": "={{ $json['ROTEIRO DO VÍDEO'] }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        208,
+        -112
+      ],
+      "id": "b8bcb0fa-dd87-4bb3-bb18-07519db870a3",
+      "name": "Solicitação Video"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "7b4e7cdb-60d3-461a-af7e-2db15892b029",
+              "name": "Nome",
+              "value": "={{ $json['SEU NOME'] }}",
+              "type": "string"
+            },
+            {
+              "id": "b8d91b20-9223-44f4-b4a3-be5cd49bb646",
+              "name": "Escolha",
+              "value": "={{ $json['EM QUAL ÁREA PODEMOS TE SERVIR?'] }}",
+              "type": "string"
+            },
+            {
+              "id": "da3e32b4-4874-479d-9fef-85d8e509ae1e",
+              "name": "Numero com DD",
+              "value": "={{ $json['NUMERO COM DD'] }}",
+              "type": "number"
+            },
+            {
+              "id": "39357cae-4a18-40ff-868e-1237a4740319",
+              "name": "Ministério",
+              "value": "={{ $json['SEU MINISTÉRIO'] }}",
+              "type": "string"
+            },
+            {
+              "id": "a7bc8f44-7d4a-4bb1-bb1f-fa5eede0aace",
+              "name": "Email",
+              "value": "={{ $json.EMAIL }}",
+              "type": "string"
+            },
+            {
+              "id": "1c67c8dd-5ef6-4d12-9ddd-c99c212dea96",
+              "name": "Texto Fundamental",
+              "value": "={{ $json['INSIRA O TEXTO FUNDAMENTAL A SER COMUNICADO (EX: TÍTULOS, DATAS, FRASES ...)'] }}",
+              "type": "string"
+            },
+            {
+              "id": "1f78184a-d977-4546-8f8a-c8069f910ac0",
+              "name": "Data do evento (se tiver)",
+              "value": "={{\n  (() => {\n    const input = $json['QUANDO SERÁ O SEU EVENTO? (Se tiver)']; // Ex: \"13/08/2025 12:00:00\"\n    const [date, time] = input.split(\" \");\n    const [day, month, year] = date.split(\"/\");\n    return `${year}-${month}-${day} ${time}`;\n  })()\n}}",
+              "type": "string"
+            },
+            {
+              "id": "57e29631-9a26-4971-993b-b5d197012225",
+              "name": "Data entrega arte",
+              "value": "={{\n  (() => {\n    const input = $json['PARA QUANDO VOCÊ PRECISA DESSA ARTE?']; // Ex: \"13/08/2025 12:00:00\"\n    const [date, time] = input.split(\" \");\n    const [day, month, year] = date.split(\"/\");\n    return `${year}-${month}-${day} ${time}`;\n  })()\n}}",
+              "type": "string"
+            },
+            {
+              "id": "22883e51-6521-44c2-975e-f952e9b5f7af",
+              "name": "Uso e objetivo da arte",
+              "value": "={{ $json['Como essa arte será usada? Qual o objetivo da arte pedida? '] }}",
+              "type": "string"
+            },
+            {
+              "id": "1119f015-b7d9-483a-a34c-f72c9ba5db00",
+              "name": "Publico alvo",
+              "value": "={{ $json['DESCREVA O PÚBLICO QUE PRECISA SER ALCANÇADO'] }}",
+              "type": "string"
+            },
+            {
+              "id": "3edf091c-9974-4f35-96c3-46e47af3307b",
+              "name": "Imagem de referência",
+              "value": "={{ $json['ENVIE AQUI UMA IMAGEM, NECESSÁRIOS PARA ESTE JOB'] }}",
+              "type": "string"
+            },
+            {
+              "id": "7cc60d80-f7a0-41e6-99c3-9e6dc5c7eba8",
+              "name": "Formatos de entrega (separado por vírgula)",
+              "value": "={{ $json['EM QUAIS FORMATOS ESSE PEDIDO PRECISA SER ENTREGUE?'] }}",
+              "type": "string"
+            },
+            {
+              "id": "84ea2162-d913-464c-b943-60b6974a3fa9",
+              "name": "Arquivos necessário",
+              "value": "={{ $json['Arquivos necessário'] }}",
+              "type": "string"
+            },
+            {
+              "id": "322c7468-7d38-4522-bc47-64ec644fcc4b",
+              "name": "Email de aprovação",
+              "value": "={{ $json['EMAIL DE APROVAÇÃO'] }}",
+              "type": "string"
+            },
+            {
+              "id": "8d364a24-6f6f-4c8b-b6f2-ab322ac404db",
+              "name": "Link QR Code",
+              "value": "={{ $json['TEM ALGUM LINK DE QR Code?'] }}",
+              "type": "string"
+            },
+            {
+              "id": "b0ca5042-d700-4b9c-88dc-5a9afe3ad313",
+              "name": "Observações complementares",
+              "value": "={{ $json['OBSERVAÇÕES, INFORMAÇÕES COMPLEMENTARES, DICAS...'] }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        272,
+        176
+      ],
+      "id": "33212d8c-4cb4-4e47-be4d-b0c7554550b0",
+      "name": "Solicitação Desing"
+    },
+    {
+      "parameters": {
+        "resource": "messages-api",
+        "instanceName": "housebot",
+        "remoteJid": "={{ $('se o usuario estiver cadastrado1').item.json.numero_cliente }}",
+        "messageText": "=📹 Olá {{ $('consultar_usuario').item.json.nome }}! Sua solicitação de vídeo \"{{ $('Solicitação Video').item.json['Titulo do vídeo'] }}\" foi cadastrada com sucesso 🙌\nAgora é só aguardar nossa equipe encaminhar para o quadro de designers 🎨✨",
+        "options_message": {}
+      },
+      "type": "n8n-nodes-evolution-api.evolutionApi",
+      "typeVersion": 1,
+      "position": [
+        1104,
+        -240
+      ],
+      "id": "6f3a0975-da8b-41a2-8dae-04c07a70fbcd",
+      "name": "Mensagem confirmação cadastrada",
+      "credentials": {
+        "evolutionApi": {
+          "id": "jcphnfzGjPkrP0Nf",
+          "name": "HousinhoBot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "0ycc6Y99Vvj6bGOT",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/0ycc6Y99Vvj6bGOT",
+          "cachedResultName": "Cadastrar Cliente"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "numero": "={{ $('Solicitação Video').item.json['Numero com DD'] }}",
+            "nome": "={{ $('Solicitação Video').item.json.Nome }}",
+            "email": "={{ $('Solicitação Video').item.json.Email }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "numero",
+              "displayName": "numero",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "nome",
+              "displayName": "nome",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "email",
+              "displayName": "email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        832,
+        -64
+      ],
+      "id": "5e296895-02c1-4cd7-aa4c-b131b6cc6c53",
+      "name": "cadastrar_cliente"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "tfan4l8bk8tZYpcS",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/tfan4l8bk8tZYpcS",
+          "cachedResultName": "Cadastrar_Pedido VIDEO"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "nome": "={{ $('Solicitação Video').item.json.Nome }}",
+            "numero_cliente": "={{ $('Solicitação Video').item.json['Numero com DD'] }}",
+            "email_cliente": "={{ $('Solicitação Video').item.json.Email }}",
+            "ministerio": "={{ $('Solicitação Video').item.json['Ministério'] }}",
+            "tipo_pedido": "={{ $('Solicitação Video').item.json.Escolha }}",
+            "titulo_video": "={{ $('Solicitação Video').item.json['Titulo do vídeo'] }}",
+            "tempo_duracao_video": "={{ $('Solicitação Video').item.json['Tempo de duração do vídeo'] }}",
+            "onde_passara_video": "={{ $('Solicitação Video').item.json['Onde passara o vídeo'] }}",
+            "data_entrega_video": "={{ $('Solicitação Video').item.json['Data entrega vídeo'] }}",
+            "referencia_video": "={{ $('Solicitação Video').item.json['Referencia vídeo'] }}",
+            "publico_alvo_video": "={{ $('Solicitação Video').item.json['Publico alvo vídeo'] }}",
+            "fonte_imagens": "={{ $('Solicitação Video').item.json['Fonte imagens'] }}",
+            "roteiro_video": "={{ $('Solicitação Video').item.json['Roteiro Vídeo'] }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "nome",
+              "displayName": "nome",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "numero_cliente",
+              "displayName": "numero_cliente",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "email_cliente",
+              "displayName": "email_cliente",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "ministerio",
+              "displayName": "ministerio",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "tipo_pedido",
+              "displayName": "tipo_pedido",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "titulo_video",
+              "displayName": "titulo_video",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "tempo_duracao_video",
+              "displayName": "tempo_duracao_video",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "onde_passara_video",
+              "displayName": "onde_passara_video",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "data_entrega_video",
+              "displayName": "data_entrega_video",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "referencia_video",
+              "displayName": "referencia_video",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "publico_alvo_video",
+              "displayName": "publico_alvo_video",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "fonte_imagens",
+              "displayName": "fonte_imagens",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "roteiro_video",
+              "displayName": "roteiro_video",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        1120,
+        -64
+      ],
+      "id": "3e136581-7985-4b96-aa95-0073a4d03d2a",
+      "name": "cadastrar_video"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "tfan4l8bk8tZYpcS",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/tfan4l8bk8tZYpcS",
+          "cachedResultName": "Cadastrar_Pedido VIDEO"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "nome": "={{ $json.nome }}",
+            "numero_cliente": "={{ $json.numero_cliente }}",
+            "email_cliente": "={{ $json.email_cliente }}",
+            "ministerio": "={{ $('Solicitação Video').item.json['Ministério'] }}",
+            "tipo_pedido": "={{ $('Solicitação Video').item.json.Escolha }}",
+            "titulo_video": "={{ $('Solicitação Video').item.json['Titulo do vídeo'] }}",
+            "tempo_duracao_video": "={{ $('Solicitação Video').item.json['Tempo de duração do vídeo'] }}",
+            "onde_passara_video": "={{ $('Solicitação Video').item.json['Onde passara o vídeo'] }}",
+            "data_entrega_video": "={{ $('Solicitação Video').item.json['Data entrega vídeo'] }}",
+            "referencia_video": "={{ $('Solicitação Video').item.json['Referencia vídeo'] }}",
+            "publico_alvo_video": "={{ $('Solicitação Video').item.json['Publico alvo vídeo'] }}",
+            "fonte_imagens": "={{ $('Solicitação Video').item.json['Fonte imagens'] }}",
+            "roteiro_video": "={{ $('Solicitação Video').item.json['Roteiro Vídeo'] }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "nome",
+              "displayName": "nome",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "numero_cliente",
+              "displayName": "numero_cliente",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "email_cliente",
+              "displayName": "email_cliente",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "ministerio",
+              "displayName": "ministerio",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "tipo_pedido",
+              "displayName": "tipo_pedido",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "titulo_video",
+              "displayName": "titulo_video",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "tempo_duracao_video",
+              "displayName": "tempo_duracao_video",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "onde_passara_video",
+              "displayName": "onde_passara_video",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "data_entrega_video",
+              "displayName": "data_entrega_video",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "referencia_video",
+              "displayName": "referencia_video",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "publico_alvo_video",
+              "displayName": "publico_alvo_video",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "fonte_imagens",
+              "displayName": "fonte_imagens",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "roteiro_video",
+              "displayName": "roteiro_video",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        864,
+        -240
+      ],
+      "id": "46982c73-aca6-4898-8fe6-18acfe614ea3",
+      "name": "cadastrar video"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "iA1zvvng13aAjCNF",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/iA1zvvng13aAjCNF",
+          "cachedResultName": "Consultar Usuario"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "numero": "={{ $json['Numero com DD'] }}"
+          },
+          "matchingColumns": [
+            "numero"
+          ],
+          "schema": [
+            {
+              "id": "numero",
+              "displayName": "numero",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        416,
+        -112
+      ],
+      "id": "386669a8-77cc-40da-9589-406982da9bc1",
+      "name": "consultar_usuario"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "iA1zvvng13aAjCNF",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/iA1zvvng13aAjCNF",
+          "cachedResultName": "Consultar Usuario"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "numero": "={{ $json['Numero com DD'] }}"
+          },
+          "matchingColumns": [
+            "numero"
+          ],
+          "schema": [
+            {
+              "id": "numero",
+              "displayName": "numero",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": true,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        480,
+        192
+      ],
+      "id": "618967b1-6d95-45a8-aaa8-4465d1a05060",
+      "name": "consultar usuario"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "Tt1hIR7131AvWv4h",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/Tt1hIR7131AvWv4h",
+          "cachedResultName": "Cadastrar Pedido Design"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "nome": "={{ $('consultar usuario').item.json.nome }}",
+            "numero_cliente": "={{ $('consultar usuario').item.json.numero_cliente }}",
+            "email_cliente": "={{ $('consultar usuario').item.json.email_cliente }}",
+            "ministerio": "={{ $('Solicitação Desing').item.json['Ministério'] }}",
+            "tipo_pedido": "={{ $('Solicitação Desing').item.json.Escolha }}",
+            "texto_fundamental": "={{ $('Solicitação Desing').item.json['Texto Fundamental'] }}",
+            "data_evento": "={{ $('Solicitação Desing').item.json['Data do evento (se tiver)'] }}",
+            "data_entrega_arte": "={{ $('Solicitação Desing').item.json['Data entrega arte'] }}",
+            "uso_e_objetivo_arte": "={{ $('Solicitação Desing').item.json['Uso e objetivo da arte'] }}",
+            "publico_alcancado": "={{ $('Solicitação Desing').item.json['Publico alvo'] }}",
+            "imagem_referencia": "={{ $json.imageUrl }}",
+            "formatos_entrega": "={{ $('Solicitação Desing').item.json['Formatos de entrega (separado por vírgula)'] }}",
+            "arquivos_necessarios": "={{ $('Solicitação Desing').item.json['Arquivos necessário'] }}",
+            "email_aprovacao_orcamento": "={{ $('Solicitação Desing').item.json['Email de aprovação'] }}",
+            "link_qr_code": "={{ $('Solicitação Desing').item.json['Link QR Code'] }}",
+            "observacoes_complementares": "={{ $('Solicitação Desing').item.json['Observações complementares'] }}",
+            "id_cliente": "={{ $('consultar usuario').item.json.id }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "id_cliente",
+              "displayName": "id_cliente",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "nome",
+              "displayName": "nome",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "numero_cliente",
+              "displayName": "numero_cliente",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "email_cliente",
+              "displayName": "email_cliente",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "ministerio",
+              "displayName": "ministerio",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "tipo_pedido",
+              "displayName": "tipo_pedido",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "texto_fundamental",
+              "displayName": "texto_fundamental",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "data_evento",
+              "displayName": "data_evento",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "data_entrega_arte",
+              "displayName": "data_entrega_arte",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "uso_e_objetivo_arte",
+              "displayName": "uso_e_objetivo_arte",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "publico_alcancado",
+              "displayName": "publico_alcancado",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "imagem_referencia",
+              "displayName": "imagem_referencia",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "formatos_entrega",
+              "displayName": "formatos_entrega",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "arquivos_necessarios",
+              "displayName": "arquivos_necessarios",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "email_aprovacao_orcamento",
+              "displayName": "email_aprovacao_orcamento",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "link_qr_code",
+              "displayName": "link_qr_code",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "observacoes_complementares",
+              "displayName": "observacoes_complementares",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            }
+          ],
+          "attemptToConvertTypes": true,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        2048,
+        96
+      ],
+      "id": "698e4e06-867d-4b6a-bbf3-5613bec39eb5",
+      "name": "cadastrar design"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "0ycc6Y99Vvj6bGOT",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/0ycc6Y99Vvj6bGOT",
+          "cachedResultName": "Cadastrar Cliente"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "numero": "={{ $('Solicitação Desing').item.json['Numero com DD'] }}",
+            "nome": "={{ $('Solicitação Desing').item.json.Nome }}",
+            "email": "={{ $('Solicitação Desing').item.json.Email }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "numero",
+              "displayName": "numero",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "nome",
+              "displayName": "nome",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "email",
+              "displayName": "email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            }
+          ],
+          "attemptToConvertTypes": true,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        1904,
+        384
+      ],
+      "id": "85c6b57e-54ec-492e-9e43-fc9910626526",
+      "name": "cadastrar cliente"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "Tt1hIR7131AvWv4h",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/Tt1hIR7131AvWv4h",
+          "cachedResultName": "Cadastrar Pedido Design"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "nome": "={{ $('Solicitação Desing').item.json.Nome }}",
+            "numero_cliente": "={{ $('Solicitação Desing').item.json['Numero com DD'] }}",
+            "email_cliente": "={{ $('Solicitação Desing').item.json.Email }}",
+            "ministerio": "={{ $('Solicitação Desing').item.json['Ministério'] }}",
+            "tipo_pedido": "={{ $('Solicitação Desing').item.json.Escolha }}",
+            "texto_fundamental": "={{ $('Solicitação Desing').item.json['Texto Fundamental'] }}",
+            "data_evento": "={{ $('Solicitação Desing').item.json['Data do evento (se tiver)'] }}",
+            "data_entrega_arte": "={{ $('Solicitação Desing').item.json['Data entrega arte'] }}",
+            "uso_e_objetivo_arte": "={{ $('Solicitação Desing').item.json['Uso e objetivo da arte'] }}",
+            "publico_alcancado": "={{ $('Solicitação Desing').item.json['Publico alvo'] }}",
+            "imagem_referencia": "={{ $('HTTP Request2').item.json.imageUrl }}",
+            "formatos_entrega": "={{ $('Solicitação Desing').item.json['Formatos de entrega (separado por vírgula)'] }}",
+            "arquivos_necessarios": "={{ $('Solicitação Desing').item.json['Arquivos necessário'] }}",
+            "email_aprovacao_orcamento": "={{ $('Solicitação Desing').item.json['Email de aprovação'] }}",
+            "link_qr_code": "={{ $('Solicitação Desing').item.json['Link QR Code'] }}",
+            "observacoes_complementares": "={{ $('Solicitação Desing').item.json['Observações complementares'] }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "id_cliente",
+              "displayName": "id_cliente",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "nome",
+              "displayName": "nome",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "numero_cliente",
+              "displayName": "numero_cliente",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "email_cliente",
+              "displayName": "email_cliente",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "ministerio",
+              "displayName": "ministerio",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "tipo_pedido",
+              "displayName": "tipo_pedido",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "texto_fundamental",
+              "displayName": "texto_fundamental",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "data_evento",
+              "displayName": "data_evento",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "data_entrega_arte",
+              "displayName": "data_entrega_arte",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "uso_e_objetivo_arte",
+              "displayName": "uso_e_objetivo_arte",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "publico_alcancado",
+              "displayName": "publico_alcancado",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "imagem_referencia",
+              "displayName": "imagem_referencia",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "formatos_entrega",
+              "displayName": "formatos_entrega",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "arquivos_necessarios",
+              "displayName": "arquivos_necessarios",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "email_aprovacao_orcamento",
+              "displayName": "email_aprovacao_orcamento",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "link_qr_code",
+              "displayName": "link_qr_code",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "observacoes_complementares",
+              "displayName": "observacoes_complementares",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            }
+          ],
+          "attemptToConvertTypes": true,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        2144,
+        416
+      ],
+      "id": "63083197-418a-41be-8b37-520294416c4b",
+      "name": "cadastrar_design"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "87e3d4e9-dd72-4859-898f-9862ccda6d14",
+              "leftValue": "={{ $json.nome }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        672,
+        192
+      ],
+      "id": "8ba0988e-1051-4721-be2b-01e6296a5544",
+      "name": "se o usuario estiver cadastrado"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "87e3d4e9-dd72-4859-898f-9862ccda6d14",
+              "leftValue": "={{ $json.nome }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        592,
+        -112
+      ],
+      "id": "6bb51d21-888d-46ad-a855-7505281c82ff",
+      "name": "se o usuario estiver cadastrado1"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "677c3134-2bea-4bd9-80aa-eb997b020b3b",
+              "leftValue": "={{ $('Solicitação Desing').item.json['Imagem de referência'] }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        944,
+        336
+      ],
+      "id": "dfe300a2-2271-4c59-b93a-2df26e55fe11",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "677c3134-2bea-4bd9-80aa-eb997b020b3b",
+              "leftValue": "={{ $('Solicitação Desing').item.json['Imagem de referência'] }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": "",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        992,
+        128
+      ],
+      "id": "c96f0555-1d2a-476c-96f5-f96555886168",
+      "name": "If1"
+    },
+    {
+      "parameters": {
+        "operation": "download",
+        "fileId": {
+          "__rl": true,
+          "value": "={{ $('Solicitação Desing').item.json['Imagem de referência'].match(/id=(.*)/)[1] }}",
+          "mode": "id"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        1264,
+        48
+      ],
+      "id": "776a8010-5773-4529-ad05-38f1d23a3708",
+      "name": "Download file",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "EksgwHPS1ak0r7rJ",
+          "name": "Housinho"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "copy",
+        "fileId": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        2304,
+        -448
+      ],
+      "id": "3a81ea7c-38a0-4ab6-a907-cadb992957d7",
+      "name": "Copy file",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "jN0ErkwtNgjLUSYd",
+          "name": "Google Drive account"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "operation": "copy",
+        "fileId": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        2752,
+        -128
+      ],
+      "id": "74788659-05d2-4f54-a53d-0211262de1f1",
+      "name": "Copy file1",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "EksgwHPS1ak0r7rJ",
+          "name": "Housinho"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        }
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        3040,
+        -128
+      ],
+      "id": "d5cb6898-a178-4f35-aeb9-6bdb15e45a3b",
+      "name": "Get row(s) in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "OwvrpsjNaa0e0bo4",
+          "name": "Housinho"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "operation": "binaryToPropery",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1,
+      "position": [
+        2672,
+        48
+      ],
+      "id": "42018877-9180-47a3-9cf0-b4523beb96b2",
+      "name": "Extract from File",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "resource": "attachment",
+        "operation": "create",
+        "cardId": {
+          "__rl": true,
+          "value": "EzcihUwb",
+          "mode": "id"
+        },
+        "url": "https://drive.google.com/open?id=1zk2DFtiv1zXKod3UcsfdUSDtSav307jp",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.trello",
+      "typeVersion": 1,
+      "position": [
+        2768,
+        304
+      ],
+      "id": "23920a97-8674-4f02-a512-7591f3b4021b",
+      "name": "Create an attachment",
+      "credentials": {
+        "trelloApi": {
+          "id": "iwnfHSRANh4dBsed",
+          "name": "Trello account"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://59331839fe16.ngrok-free.app/solicitacoes_mvc/api/solicitacoes/upload_image",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "multipart/form-data"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "multipart-form-data",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "refImage",
+              "value": "data"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2512,
+        -288
+      ],
+      "id": "68b9415a-cf09-439f-84f7-efa7562f8569",
+      "name": "HTTP Request",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://35a5264c6373.ngrok-free.app/solicitacoes_mvc/api/solicitacoes/upload_image",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "User-Agent",
+              "value": "insomnia/11.2.0"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "multipart-form-data",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "parameterType": "formBinaryData",
+              "name": "refImage",
+              "inputDataFieldName": "data"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1600,
+        64
+      ],
+      "id": "109ed998-5e8b-4db1-93d7-f21644ab7575",
+      "name": "HTTP Request1"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "e83f3734-ee0e-4b35-82e9-4d320518625e",
+              "name": "imageUrl",
+              "value": "={{ $json.imageUrl }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1808,
+        64
+      ],
+      "id": "54db2deb-8015-4a35-83f8-3a1ba33360af",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "Tt1hIR7131AvWv4h",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/Tt1hIR7131AvWv4h",
+          "cachedResultName": "Cadastrar Pedido Design"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "nome": "={{ $('consultar usuario').item.json.nome }}",
+            "numero_cliente": "={{ $('consultar usuario').item.json.numero_cliente }}",
+            "email_cliente": "={{ $('consultar usuario').item.json.email_cliente }}",
+            "ministerio": "={{ $('Solicitação Desing').item.json['Ministério'] }}",
+            "tipo_pedido": "={{ $('Solicitação Desing').item.json.Escolha }}",
+            "texto_fundamental": "={{ $('Solicitação Desing').item.json['Texto Fundamental'] }}",
+            "data_evento": "={{ $('Solicitação Desing').item.json['Data do evento (se tiver)'] }}",
+            "data_entrega_arte": "={{ $('Solicitação Desing').item.json['Data entrega arte'] }}",
+            "uso_e_objetivo_arte": "={{ $('Solicitação Desing').item.json['Uso e objetivo da arte'] }}",
+            "publico_alcancado": "={{ $('Solicitação Desing').item.json['Publico alvo'] }}",
+            "imagem_referencia": "={{ $('Solicitação Desing').item.json['Imagem de referência'] }}",
+            "formatos_entrega": "={{ $('Solicitação Desing').item.json['Formatos de entrega (separado por vírgula)'] }}",
+            "arquivos_necessarios": "={{ $('Solicitação Desing').item.json['Arquivos necessário'] }}",
+            "email_aprovacao_orcamento": "={{ $('Solicitação Desing').item.json['Email de aprovação'] }}",
+            "link_qr_code": "={{ $('Solicitação Desing').item.json['Link QR Code'] }}",
+            "observacoes_complementares": "={{ $('Solicitação Desing').item.json['Observações complementares'] }}",
+            "id_cliente": "={{ $('consultar usuario').item.json.id }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "id_cliente",
+              "displayName": "id_cliente",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "nome",
+              "displayName": "nome",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "numero_cliente",
+              "displayName": "numero_cliente",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "email_cliente",
+              "displayName": "email_cliente",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "ministerio",
+              "displayName": "ministerio",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "tipo_pedido",
+              "displayName": "tipo_pedido",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "texto_fundamental",
+              "displayName": "texto_fundamental",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "data_evento",
+              "displayName": "data_evento",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "data_entrega_arte",
+              "displayName": "data_entrega_arte",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "uso_e_objetivo_arte",
+              "displayName": "uso_e_objetivo_arte",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "publico_alcancado",
+              "displayName": "publico_alcancado",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "imagem_referencia",
+              "displayName": "imagem_referencia",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "formatos_entrega",
+              "displayName": "formatos_entrega",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "arquivos_necessarios",
+              "displayName": "arquivos_necessarios",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "email_aprovacao_orcamento",
+              "displayName": "email_aprovacao_orcamento",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "link_qr_code",
+              "displayName": "link_qr_code",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "observacoes_complementares",
+              "displayName": "observacoes_complementares",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            }
+          ],
+          "attemptToConvertTypes": true,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        1280,
+        192
+      ],
+      "id": "3aa1c5b7-ca95-40d0-9cdd-fd6cd0ab40ef",
+      "name": "cadastrar design1"
+    },
+    {
+      "parameters": {
+        "operation": "download",
+        "fileId": {
+          "__rl": true,
+          "value": "={{ $('Solicitação Desing').item.json['Imagem de referência'].match(/id=(.*)/)[1] }}",
+          "mode": "id"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        1200,
+        384
+      ],
+      "id": "eab3c106-1359-4912-bc77-84e95d52fbab",
+      "name": "Download file1",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "EksgwHPS1ak0r7rJ",
+          "name": "Housinho"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://1a09b3a95cf8.ngrok-free.app/solicitacoes_mvc/api/solicitacoes/upload_image",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "User-Agent",
+              "value": "insomnia/11.2.0"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "multipart-form-data",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "parameterType": "formBinaryData",
+              "name": "refImage",
+              "inputDataFieldName": "data"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1424,
+        384
+      ],
+      "id": "9ff8a49a-74be-4c44-896a-7699dd8a9edc",
+      "name": "HTTP Request2"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "e83f3734-ee0e-4b35-82e9-4d320518625e",
+              "name": "imageUrl",
+              "value": "={{ $json.imageUrl }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1616,
+        384
+      ],
+      "id": "8ab5a65b-76fa-4c04-936c-4744e5b298a1",
+      "name": "Edit Fields1"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "0ycc6Y99Vvj6bGOT",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/0ycc6Y99Vvj6bGOT",
+          "cachedResultName": "Cadastrar Cliente"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "numero": "={{ $('Solicitação Desing').item.json['Numero com DD'] }}",
+            "nome": "={{ $('Solicitação Desing').item.json.Nome }}",
+            "email": "={{ $('Solicitação Desing').item.json.Email }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "numero",
+              "displayName": "numero",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "nome",
+              "displayName": "nome",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "email",
+              "displayName": "email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            }
+          ],
+          "attemptToConvertTypes": true,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        1216,
+        592
+      ],
+      "id": "3e676538-ad1b-4a63-817e-a1265d179228",
+      "name": "cadastrar cliente1"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "Tt1hIR7131AvWv4h",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/Tt1hIR7131AvWv4h",
+          "cachedResultName": "Cadastrar Pedido Design"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "nome": "={{ $('Solicitação Desing').item.json.Nome }}",
+            "numero_cliente": "={{ $('Solicitação Desing').item.json['Numero com DD'] }}",
+            "email_cliente": "={{ $('Solicitação Desing').item.json.Email }}",
+            "ministerio": "={{ $('Solicitação Desing').item.json['Ministério'] }}",
+            "tipo_pedido": "={{ $('Solicitação Desing').item.json.Escolha }}",
+            "texto_fundamental": "={{ $('Solicitação Desing').item.json['Texto Fundamental'] }}",
+            "data_evento": "={{ $('Solicitação Desing').item.json['Data do evento (se tiver)'] }}",
+            "data_entrega_arte": "={{ $('Solicitação Desing').item.json['Data entrega arte'] }}",
+            "uso_e_objetivo_arte": "={{ $('Solicitação Desing').item.json['Uso e objetivo da arte'] }}",
+            "publico_alcancado": "={{ $('Solicitação Desing').item.json['Publico alvo'] }}",
+            "formatos_entrega": "={{ $('Solicitação Desing').item.json['Formatos de entrega (separado por vírgula)'] }}",
+            "arquivos_necessarios": "={{ $('Solicitação Desing').item.json['Arquivos necessário'] }}",
+            "email_aprovacao_orcamento": "={{ $('Solicitação Desing').item.json['Email de aprovação'] }}",
+            "link_qr_code": "={{ $('Solicitação Desing').item.json['Link QR Code'] }}",
+            "observacoes_complementares": "={{ $('Solicitação Desing').item.json['Observações complementares'] }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "id_cliente",
+              "displayName": "id_cliente",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "nome",
+              "displayName": "nome",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "numero_cliente",
+              "displayName": "numero_cliente",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "email_cliente",
+              "displayName": "email_cliente",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "ministerio",
+              "displayName": "ministerio",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "tipo_pedido",
+              "displayName": "tipo_pedido",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "texto_fundamental",
+              "displayName": "texto_fundamental",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "data_evento",
+              "displayName": "data_evento",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "data_entrega_arte",
+              "displayName": "data_entrega_arte",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "uso_e_objetivo_arte",
+              "displayName": "uso_e_objetivo_arte",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "publico_alcancado",
+              "displayName": "publico_alcancado",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "imagem_referencia",
+              "displayName": "imagem_referencia",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": true
+            },
+            {
+              "id": "formatos_entrega",
+              "displayName": "formatos_entrega",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "arquivos_necessarios",
+              "displayName": "arquivos_necessarios",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "email_aprovacao_orcamento",
+              "displayName": "email_aprovacao_orcamento",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "link_qr_code",
+              "displayName": "link_qr_code",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "observacoes_complementares",
+              "displayName": "observacoes_complementares",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            }
+          ],
+          "attemptToConvertTypes": true,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        1616,
+        592
+      ],
+      "id": "8f76e530-c2cd-458d-89ba-1dbc81d13f05",
+      "name": "cadastrar_design1"
+    }
+  ],
+  "pinData": {
+    "Google Sheets Trigger": [
+      {
+        "json": {
+          "Carimbo de data/hora": "20/10/2025 20:52:56",
+          "SEU NOME": "boletao sobe capa",
+          "SEU MINISTÉRIO": ".",
+          "NUMERO COM DD": 12991443990,
+          "EMAIL": "enzoraphaelsjc@gmail.com",
+          "EM QUAL ÁREA PODEMOS TE SERVIR?": "Desing",
+          "TÍTULO DO VÍDEO": "",
+          "TEMPO DE DURAÇÃO DO VÍDEO": "",
+          "ESSE VÍDEO IRÁ PASSAR ONDE?": "",
+          "PARA QUANDO SERÁ?": "",
+          "VOCÊ TEM ALGUMA REFERÊNCIA? (Coloque o link do vídeo)": "",
+          "DESCREVA O PÚBLICO ALVO DO VÍDEO": "",
+          "FONTE DE IMAGENS": "",
+          "ROTEIRO DO VÍDEO": "",
+          "INSIRA O TEXTO FUNDAMENTAL A SER COMUNICADO (EX: TÍTULOS, DATAS, FRASES ...)": "",
+          "QUANDO SERÁ O SEU EVENTO? (Se tiver)": "",
+          "PARA QUANDO VOCÊ PRECISA DESSA ARTE?": "",
+          "Como essa arte será usada? Qual o objetivo da arte pedida? ": ".",
+          "DESCREVA O PÚBLICO QUE PRECISA SER ALCANÇADO": ".",
+          "ENVIE AQUI UMA IMAGEM, NECESSÁRIOS PARA ESTE JOB": "",
+          "Formatos de entrega (separado por vírgula)": "",
+          "EM QUAIS FORMATOS ESSE PEDIDO PRECISA SER ENTREGUE?": "TELÃO PADRÃO (LATERAL AUDITÓRIO PRINCIPAL) 1920x1080 px",
+          "EMAIL DE APROVAÇÃO": "enzoraphaelsjc@gmail.com",
+          "TEM ALGUM LINK DE QR Code?": "",
+          "OBSERVAÇÕES, INFORMAÇÕES COMPLEMENTARES, DICAS...": ".",
+          "Coluna 25": ""
+        }
+      }
+    ]
+  },
+  "connections": {
+    "Google Sheets Trigger": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Solicitação Video",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Solicitação Desing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Solicitação Video": {
+      "main": [
+        [
+          {
+            "node": "consultar_usuario",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Solicitação Desing": {
+      "main": [
+        [
+          {
+            "node": "consultar usuario",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "cadastrar_cliente": {
+      "main": [
+        [
+          {
+            "node": "cadastrar_video",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "cadastrar video": {
+      "main": [
+        [
+          {
+            "node": "Mensagem confirmação cadastrada",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "consultar_usuario": {
+      "main": [
+        [
+          {
+            "node": "se o usuario estiver cadastrado1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "consultar usuario": {
+      "main": [
+        [
+          {
+            "node": "se o usuario estiver cadastrado",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "cadastrar cliente": {
+      "main": [
+        [
+          {
+            "node": "cadastrar_design",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "se o usuario estiver cadastrado": {
+      "main": [
+        [
+          {
+            "node": "If1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "se o usuario estiver cadastrado1": {
+      "main": [
+        [
+          {
+            "node": "cadastrar video",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "cadastrar_cliente",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Download file1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "cadastrar cliente1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If1": {
+      "main": [
+        [
+          {
+            "node": "Download file",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "cadastrar design1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Copy file1": {
+      "main": [
+        []
+      ]
+    },
+    "Download file": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract from File": {
+      "main": [
+        []
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        []
+      ]
+    },
+    "HTTP Request1": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "cadastrar design",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download file1": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request2": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields1": {
+      "main": [
+        [
+          {
+            "node": "cadastrar cliente",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "cadastrar cliente1": {
+      "main": [
+        [
+          {
+            "node": "cadastrar_design1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "88aed6cd-cab8-4ded-b27a-e0f7a727f069",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "6b305a80a5187e2b6854af9a2913f91761217b913e9306fbccc703124236b512"
+  },
+  "id": "OETtJv9Z6PIFTVpx",
+  "tags": [
+    {
+      "createdAt": "2025-07-29T20:56:11.852Z",
+      "updatedAt": "2025-07-29T20:56:11.852Z",
+      "id": "J6QNO6qDuMb8V4Jm",
+      "name": "TCC"
+    }
+  ]
+}

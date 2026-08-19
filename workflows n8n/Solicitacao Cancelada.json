@@ -1,0 +1,112 @@
+{
+  "name": "Solicitacao Cancelada",
+  "nodes": [
+    {
+      "parameters": {
+        "workflowInputs": {
+          "values": [
+            {
+              "name": "numero"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "bc550fd0-d4b0-4475-bfc7-8962c7105806",
+      "name": "When Executed by Another Workflow"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT\n    sd.texto_fundamental AS titulo,\n    sd.status,\n    sd.trello_card_id\nFROM\n    solicitacoes_design sd\nJOIN\n    clientes c ON sd.cliente_id = c.id\nWHERE\n    c.numero_cliente = '{{ $json.numero }}'\n\nUNION ALL\n\nSELECT\n    sv.titulo_video AS titulo,\n    sv.status,\n    sv.trello_card_id\nFROM\n    solicitacoes_video sv\nJOIN\n    clientes c ON sv.cliente_id = c.id\nWHERE\n    c.numero_cliente = '{{ $json.numero }}'\n\n-- Opcional: Você pode adicionar um ORDER BY aqui se quiser ordenar os resultados combinados\n-- ORDER BY titulo ASC",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.mySql",
+      "typeVersion": 2.4,
+      "position": [
+        560,
+        0
+      ],
+      "id": "8d6cbb46-1f90-4eba-a37a-9065e3b93299",
+      "name": "Execute a SQL query",
+      "alwaysOutputData": true,
+      "credentials": {
+        "mySql": {
+          "id": "eHBb7SGQq9KSA7SC",
+          "name": "TCC ATUALIZADO"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "73dcd7a8-6856-407d-93ca-d9d3e26a948e",
+              "name": "numero",
+              "value": "={{ $json.numero }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        224,
+        0
+      ],
+      "id": "0aec82ef-08a6-4dec-b7d6-8f7918e6edab",
+      "name": "Edit Fields"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Execute a SQL query",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "19526e26-2e55-4747-be3d-5de0f2f5f2a2",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "6b305a80a5187e2b6854af9a2913f91761217b913e9306fbccc703124236b512"
+  },
+  "id": "Q4SflhmlrtZlWBeH",
+  "tags": [
+    {
+      "createdAt": "2025-07-29T20:56:11.852Z",
+      "updatedAt": "2025-07-29T20:56:11.852Z",
+      "id": "J6QNO6qDuMb8V4Jm",
+      "name": "TCC"
+    }
+  ]
+}

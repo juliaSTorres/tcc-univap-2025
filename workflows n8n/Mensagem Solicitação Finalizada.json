@@ -1,0 +1,843 @@
+{
+  "name": "Mensagem Solicitação Finalizada",
+  "nodes": [
+    {
+      "parameters": {
+        "id": "685ab47e223dee2ac54c97cf"
+      },
+      "type": "n8n-nodes-base.trelloTrigger",
+      "typeVersion": 1,
+      "position": [
+        -2016,
+        32
+      ],
+      "id": "275edb8d-e2c0-4ec3-9965-814295c77525",
+      "name": "Trello Trigger",
+      "webhookId": "9990f257-ec62-4b05-9306-46b3f80d02ce",
+      "notesInFlow": false,
+      "credentials": {
+        "trelloApi": {
+          "id": "iwnfHSRANh4dBsed",
+          "name": "Trello account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://host.docker.internal:8080/message/sendText/housebot",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "number",
+              "value": "={{ $json.numero_cliente }}"
+            },
+            {
+              "name": "text",
+              "value": "=🎉🎉 *SOLICITAÇÃO FINALIZADA* 🎉🎉\n\n*{{ $json.cliente_nome.split(' ')[0] }}*, sua solicitação foi *finalizada*!! 😍\n\nO designer deixou um link do drive para você!! 😉\n\n{{ $json.url }}\n\n*Deus abençoe!! 🙏😎*"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1584,
+        -16
+      ],
+      "id": "c25bd3e2-bd90-4cb9-b508-6942cfffb1eb",
+      "name": "HTTP Request",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "0909e275-b03c-4d36-8fbc-d66c3f9815a3",
+              "name": "cliente_nome",
+              "value": "={{ $json.cliente_nome }}",
+              "type": "string"
+            },
+            {
+              "id": "5863d879-e2bb-45e4-9630-37dca9c6e206",
+              "name": "numero_cliente",
+              "value": "={{ $json.numero_cliente }}",
+              "type": "string"
+            },
+            {
+              "id": "f44195db-7797-4a0c-9c46-6e6429857ccb",
+              "name": "url",
+              "value": "={{ $('Edit Fields1').item.json.url }}",
+              "type": "string"
+            },
+            {
+              "id": "48e0561f-4432-489b-b5fa-1cdb4e665794",
+              "name": "texto_fundamental",
+              "value": "={{ $json.texto_fundamental }}",
+              "type": "string"
+            },
+            {
+              "id": "46ee7acb-d26c-4588-b25b-8b459dcf0818",
+              "name": "trello_card_id",
+              "value": "={{ $json.trello_card_id }}",
+              "type": "string"
+            },
+            {
+              "id": "dea21aad-97ed-46aa-b552-8843f6641bc2",
+              "name": "name_drive",
+              "value": "={{ $('Edit Fields3').item.json.name_drive }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        368,
+        32
+      ],
+      "id": "a3d9677e-8893-43ae-9dc8-3b1616707562",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "resource": "attachment",
+        "cardId": {
+          "__rl": true,
+          "value": "={{ $json.id }}",
+          "mode": "id"
+        },
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.trello",
+      "typeVersion": 1,
+      "position": [
+        -1120,
+        32
+      ],
+      "id": "73b2b16b-2b27-4e09-a680-0aea19f60f4e",
+      "name": "Get many attachments",
+      "credentials": {
+        "trelloApi": {
+          "id": "iwnfHSRANh4dBsed",
+          "name": "Trello account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT\n    sd.id,\n    sd.ministerio,\n    sd.status,\n    sd.data_criacao,\n    'design' AS tipo_pedido,\n    sd.trello_card_id,\n    c.nome AS cliente_nome,\n    c.numero_cliente,\n    c.email_cliente,\n    sd.texto_fundamental,\n    sd.data_evento,\n    sd.data_entrega_arte,\n    sd.uso_e_objetivo_arte,\n    sd.publico_alcancado,\n    sd.imagem_referencia,\n    sd.formatos_entrega,\n    sd.arquivos_necessarios,\n    sd.email_aprovacao_orcamento,\n    sd.link_qr_code,\n    sd.observacoes_complementares\nFROM\n    solicitacoes_design sd\nJOIN\n    clientes c ON sd.cliente_id = c.id\nWHERE\n    sd.trello_card_id = '{{ $('Get a card').item.json.id }}'",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.mySql",
+      "typeVersion": 2.4,
+      "position": [
+        0,
+        0
+      ],
+      "id": "bf8d42ad-1bd3-41b2-89bb-4880de88c6b0",
+      "name": "Execute a SQL query",
+      "credentials": {
+        "mySql": {
+          "id": "eHBb7SGQq9KSA7SC",
+          "name": "TCC ATUALIZADO"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "id": {
+          "__rl": true,
+          "value": "={{ $json.action.display.entities.card.id }}",
+          "mode": "id"
+        },
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.trello",
+      "typeVersion": 1,
+      "position": [
+        -1328,
+        32
+      ],
+      "id": "7e7847ce-3243-4c38-90c0-bec073cd5bc2",
+      "name": "Get a card",
+      "credentials": {
+        "trelloApi": {
+          "id": "iwnfHSRANh4dBsed",
+          "name": "Trello account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "5be3d44d-8b96-4cab-beba-6901e411670a",
+              "name": "url",
+              "value": "={{ $('Get many attachments').item.json.url }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -384,
+        32
+      ],
+      "id": "b8068894-c195-4422-8c04-6d9580b4ade0",
+      "name": "Edit Fields1"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "66e7a38d-51e1-4e88-a074-646a05d11e04",
+              "leftValue": "={{ $('Get a card').item.json.desc.match(/TIPO PEDIDO: (.*)/)?.[1] }}",
+              "rightValue": "=design",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -704,
+        32
+      ],
+      "id": "73170f25-cdcf-4cea-9e5c-5faf2f9f8310",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "ccbcb4c9-79bc-4765-b46d-fb4ccd25f455",
+              "name": "id",
+              "value": "={{ $json.id }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -416,
+        160
+      ],
+      "id": "c27e231f-c028-447d-a8d8-4d7fd28c0d46",
+      "name": "Edit Fields2"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "a193708f-3004-4838-8801-ddf3897049f2",
+              "name": "=tipo_pedido",
+              "value": "={{ $('Get a card').item.json.desc.match(/TIPO PEDIDO: (.*)/)?.[1] }}",
+              "type": "string"
+            },
+            {
+              "id": "5cc6aac7-aba7-4cfc-b4c3-c57af8f66a15",
+              "name": "id",
+              "value": "={{ $('Get a card').item.json.id }}",
+              "type": "string"
+            },
+            {
+              "id": "76e82c75-f51d-486c-9b00-bd69460b3b8f",
+              "name": "name_drive",
+              "value": "={{ $json.name }}",
+              "type": "string"
+            },
+            {
+              "id": "3b397e32-4a15-4ef3-9e55-eb62b9eb7186",
+              "name": "url",
+              "value": "={{ $json.url }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -896,
+        32
+      ],
+      "id": "194052e3-2f37-4c18-a3dd-bcdc30098d53",
+      "name": "Edit Fields3"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT\n    sv.id,\n    sv.ministerio,\n    sv.status,\n    sv.data_criacao,\n    'video' AS tipo_pedido,\n    sv.trello_card_id,\n    c.nome AS cliente_nome,\n    c.numero_cliente,\n    c.email_cliente,\n    sv.titulo_video,\n    sv.tempo_duracao_video,\n    sv.onde_passara_video,\n    sv.data_entrega_video,\n    sv.referencia_video,\n    sv.publico_alvo_video,\n    sv.fonte_imagens,\n    sv.roteiro_video\nFROM\n    solicitacoes_video sv\nJOIN\n    clientes c ON sv.cliente_id = c.id\nWHERE\n    sv.trello_card_id = '{{ $('Get a card').item.json.id }}'",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.mySql",
+      "typeVersion": 2.4,
+      "position": [
+        0,
+        192
+      ],
+      "id": "3bdc705b-aae8-4d7a-ae2e-909a468261c8",
+      "name": "Execute a SQL query1",
+      "credentials": {
+        "mySql": {
+          "id": "eHBb7SGQq9KSA7SC",
+          "name": "TCC ATUALIZADO"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "edecaea2-fbf3-490e-bca4-0118d8d321e9",
+              "name": "cliente_nome",
+              "value": "={{ $json.cliente_nome }}",
+              "type": "string"
+            },
+            {
+              "id": "b97c1463-11b2-48a7-b2c5-84fee1c6f6e0",
+              "name": "numero_cliente",
+              "value": "={{ $json.numero_cliente }}",
+              "type": "string"
+            },
+            {
+              "id": "70b35eb8-3c50-4498-8ef7-9aedd3ae52ad",
+              "name": "titulo_video",
+              "value": "={{ $json.titulo_video }}",
+              "type": "string"
+            },
+            {
+              "id": "9d05f039-42e2-4665-a7c6-14bfe6ab6199",
+              "name": "url",
+              "value": "={{ $('Edit Fields3').item.json.url }}",
+              "type": "string"
+            },
+            {
+              "id": "20d78f0e-fdab-456a-9a62-a5738a36ec29",
+              "name": "name_drive",
+              "value": "={{ $('Edit Fields3').item.json.name_drive }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        352,
+        192
+      ],
+      "id": "384280db-4849-46c5-988a-a45b3fd380e5",
+      "name": "Edit Fields4"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://host.docker.internal:8080/message/sendText/housebot",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "number",
+              "value": "={{ $json.numero_cliente }}"
+            },
+            {
+              "name": "text",
+              "value": "=🎉🎉 *SOLICITAÇÃO FINALIZADA* 🎉🎉\n\n*{{ $json.cliente_nome.split(' ')[0] }}*, sua solicitação foi *finalizada*!! 😍\n\nO designer deixou um link do drive para você!! 😉\n{{ $json.name_drive }}\n{{ $json.url }}\n\n*Deus abençoe!! 🙏😎*"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1584,
+        208
+      ],
+      "id": "2eaffb20-0dad-4e36-b233-5c16d8787c89",
+      "name": "HTTP Request1",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "c470c931-b710-48ca-81f2-a8e2811ebb22",
+              "leftValue": "={{ $json.action.data.listAfter.name }}",
+              "rightValue": "FINALIZADAS (AGUARDANDO APROVAÇÃO)",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -1664,
+        32
+      ],
+      "id": "d3be200e-a522-4b36-b2bb-1c9965ffeab9",
+      "name": "If1"
+    },
+    {
+      "parameters": {
+        "resource": "messages-api",
+        "instanceName": "housebot",
+        "remoteJid": "={{ $json.numero_cliente }}",
+        "messageText": "=🎉🎉 *SOLICITAÇÃO FINALIZADA* 🎉🎉  \n*{{ $json.cliente_nome.split(' ')[0] }}*, sua solicitação foi *finalizada*!! 😍  \nO designer deixou um link do drive para você!! 😉  \n{{ $json.name_drive }}\n{{ $json.url }}  \n\nNão se esqueça de conferir sua solicitação, e responder no nosso site.\nhttp://localhost/solicitacoes_mvc/public/cliente_rastreamento.html\n*Deus abençoe!! 🙏😎*",
+        "options_message": {}
+      },
+      "type": "n8n-nodes-evolution-api.evolutionApi",
+      "typeVersion": 1,
+      "position": [
+        592,
+        16
+      ],
+      "id": "393d00ba-f6b0-4fa1-bccb-55ad9248f7bd",
+      "name": "Enviar texto",
+      "credentials": {
+        "evolutionApi": {
+          "id": "jcphnfzGjPkrP0Nf",
+          "name": "HousinhoBot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "messages-api",
+        "instanceName": "housebot",
+        "remoteJid": "={{ $json.numero_cliente }}",
+        "messageText": "=🎉🎉 *SOLICITAÇÃO FINALIZADA* 🎉🎉\n\n*{{ $json.cliente_nome.split(' ')[0] }}*, sua solicitação foi *finalizada*!! 😍\n\nO designer deixou um link do drive para você!! 😉\n{{ $json.name_drive }}\n{{ $json.url }}\n\n\nNão se esqueça de conferir sua solicitação, e responder no nosso site.\nhttp://localhost/solicitacoes_mvc/public/cliente_rastreamento.html\n*Deus abençoe!! 🙏😎*\n\n",
+        "options_message": {}
+      },
+      "type": "n8n-nodes-evolution-api.evolutionApi",
+      "typeVersion": 1,
+      "position": [
+        592,
+        224
+      ],
+      "id": "8ab3842e-a856-479f-9a34-3fc3848fb55c",
+      "name": "Enviar texto1",
+      "credentials": {
+        "evolutionApi": {
+          "id": "jcphnfzGjPkrP0Nf",
+          "name": "HousinhoBot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "table": {
+          "__rl": true,
+          "value": "solicitacoes_design",
+          "mode": "list",
+          "cachedResultName": "solicitacoes_design"
+        },
+        "dataMode": "defineBelow",
+        "columnToMatchOn": "id",
+        "valueToMatchOn": "={{ $('Execute a SQL query').item.json.id }}",
+        "valuesToSend": {
+          "values": [
+            {
+              "column": "status_interno",
+              "value": "aguardando aprovação"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.mySql",
+      "typeVersion": 2.5,
+      "position": [
+        864,
+        16
+      ],
+      "id": "82eda347-2081-4e5b-ae9a-ab9a9c97d5b7",
+      "name": "Update rows in a table",
+      "credentials": {
+        "mySql": {
+          "id": "eHBb7SGQq9KSA7SC",
+          "name": "TCC ATUALIZADO"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "table": {
+          "__rl": true,
+          "value": "solicitacoes_video",
+          "mode": "list",
+          "cachedResultName": "solicitacoes_video"
+        },
+        "dataMode": "defineBelow",
+        "columnToMatchOn": "id",
+        "valueToMatchOn": "={{ $('Execute a SQL query1').item.json.id }}",
+        "valuesToSend": {
+          "values": [
+            {
+              "column": "status_interno",
+              "value": "aguardando aprovação"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.mySql",
+      "typeVersion": 2.5,
+      "position": [
+        816,
+        240
+      ],
+      "id": "a0cfd7f7-8b34-4099-ad42-3a7a452edc2c",
+      "name": "Update rows in a table1",
+      "credentials": {
+        "mySql": {
+          "id": "eHBb7SGQq9KSA7SC",
+          "name": "TCC ATUALIZADO"
+        }
+      }
+    }
+  ],
+  "pinData": {
+    "Trello Trigger": [
+      {
+        "json": {
+          "model": {
+            "id": "685ab47e223dee2ac54c97cf",
+            "name": "FINALIZADAS (AGUARDANDO APROVAÇÃO)",
+            "closed": false,
+            "color": null,
+            "idBoard": "685ab40d6abe284020815316",
+            "pos": 65536,
+            "type": null,
+            "datasource": {
+              "filter": false
+            }
+          },
+          "action": {
+            "id": "68f962f8a0f8033865eb37d7",
+            "idMemberCreator": "67ee86d4be097c49b4f55ab2",
+            "data": {
+              "old": {
+                "idList": "685ab43e7e4132b1b1aa0c38"
+              },
+              "card": {
+                "idList": "685ab47e223dee2ac54c97cf",
+                "id": "68f962dac1d394538505215e",
+                "name": "Venha participar da corrida da cidade",
+                "idShort": 206,
+                "shortLink": "0ojBnUgF"
+              },
+              "board": {
+                "id": "685ab40d6abe284020815316",
+                "name": "HOUSE - DESINGER",
+                "shortLink": "2pdypkfN"
+              },
+              "listBefore": {
+                "id": "685ab43e7e4132b1b1aa0c38",
+                "name": "Solicitações - Designer"
+              },
+              "listAfter": {
+                "id": "685ab47e223dee2ac54c97cf",
+                "name": "FINALIZADAS (AGUARDANDO APROVAÇÃO)"
+              }
+            },
+            "appCreator": null,
+            "type": "updateCard",
+            "date": "2025-10-22T23:04:24.480Z",
+            "limits": null,
+            "display": {
+              "translationKey": "action_move_card_from_list_to_list",
+              "entities": {
+                "card": {
+                  "type": "card",
+                  "id": "68f962dac1d394538505215e",
+                  "idList": "685ab47e223dee2ac54c97cf",
+                  "shortLink": "0ojBnUgF",
+                  "text": "Venha participar da corrida da cidade"
+                },
+                "listBefore": {
+                  "type": "list",
+                  "id": "685ab43e7e4132b1b1aa0c38",
+                  "text": "Solicitações - Designer"
+                },
+                "listAfter": {
+                  "type": "list",
+                  "id": "685ab47e223dee2ac54c97cf",
+                  "text": "FINALIZADAS (AGUARDANDO APROVAÇÃO)"
+                },
+                "memberCreator": {
+                  "type": "member",
+                  "id": "67ee86d4be097c49b4f55ab2",
+                  "username": "leonardomartinellideoliveiralima1",
+                  "text": "Leonardo Martinelli de Oliveira Lima"
+                }
+              }
+            },
+            "memberCreator": {
+              "id": "67ee86d4be097c49b4f55ab2",
+              "activityBlocked": false,
+              "avatarHash": "8b353d409443703aa2fba731875247fa",
+              "avatarUrl": "https://trello-members.s3.amazonaws.com/67ee86d4be097c49b4f55ab2/8b353d409443703aa2fba731875247fa",
+              "fullName": "Leonardo Martinelli de Oliveira Lima",
+              "idMemberReferrer": null,
+              "initials": "LL",
+              "nonPublic": {},
+              "nonPublicAvailable": true,
+              "username": "leonardomartinellideoliveiralima1"
+            }
+          },
+          "webhook": {
+            "id": "68f962cad602b1cc2e06225c",
+            "description": "n8n Webhook - 685ab47e223dee2ac54c97cf",
+            "idModel": "685ab47e223dee2ac54c97cf",
+            "callbackURL": "https://sistema-crescer-n8n.vuvd0x.easypanel.host/webhook/9990f257-ec62-4b05-9306-46b3f80d02ce/webhook",
+            "active": true,
+            "consecutiveFailures": 0,
+            "firstConsecutiveFailDate": null
+          }
+        }
+      }
+    ]
+  },
+  "connections": {
+    "Trello Trigger": {
+      "main": [
+        [
+          {
+            "node": "If1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Enviar texto",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get many attachments": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Execute a SQL query": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get a card": {
+      "main": [
+        [
+          {
+            "node": "Get many attachments",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields1": {
+      "main": [
+        [
+          {
+            "node": "Execute a SQL query",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Edit Fields2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields2": {
+      "main": [
+        [
+          {
+            "node": "Execute a SQL query1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields3": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Execute a SQL query1": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields4": {
+      "main": [
+        [
+          {
+            "node": "Enviar texto1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If1": {
+      "main": [
+        [
+          {
+            "node": "Get a card",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        []
+      ]
+    },
+    "Enviar texto1": {
+      "main": [
+        [
+          {
+            "node": "Update rows in a table1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Enviar texto": {
+      "main": [
+        [
+          {
+            "node": "Update rows in a table",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "3d01d72c-8979-4363-94e7-78db490b4b90",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "6b305a80a5187e2b6854af9a2913f91761217b913e9306fbccc703124236b512"
+  },
+  "id": "tNYZTBVbInJlyBGC",
+  "tags": [
+    {
+      "createdAt": "2025-07-29T20:56:11.852Z",
+      "updatedAt": "2025-07-29T20:56:11.852Z",
+      "id": "J6QNO6qDuMb8V4Jm",
+      "name": "TCC"
+    }
+  ]
+}

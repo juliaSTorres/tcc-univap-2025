@@ -1,0 +1,386 @@
+{
+  "name": "Solicitação Recusada",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "cancelar-solicitacao",
+        "options": {
+          "allowedOrigins": "*"
+        }
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -416,
+        0
+      ],
+      "id": "0826ad72-0649-409d-86f6-7995bff85b27",
+      "name": "Webhook",
+      "webhookId": "2217bc87-3447-48fe-bef6-f8fc227e007c"
+    },
+    {
+      "parameters": {
+        "resource": "messages-api",
+        "instanceName": "housebot",
+        "remoteJid": "={{ $('Edit Fields').item.json.body.solicitacao.numero_cliente }}",
+        "messageText": "=Olá, {{ $('Edit Fields').item.json.body.solicitacao.nome }}! Tudo bem?\n\nSobre a sua solicitação \"{{ $json.body.solicitacao.detalhes_solicitacao.titulo_video }}{{ $('Edit Fields').item.json.body.solicitacao.detalhes_solicitacao.texto_fundamental }}\", ela precisou ser recusada.\n\nMotivo: *{{ $('Edit Fields').item.json.body.motivo_cancelamento }}*\n\nSe tiver alguma dúvida, pode me chamar aqui, ou no contactar no email.\nhousinhobot@gmail.com\nAbraço!",
+        "options_message": {}
+      },
+      "type": "n8n-nodes-evolution-api.evolutionApi",
+      "typeVersion": 1,
+      "position": [
+        736,
+        -64
+      ],
+      "id": "a199fcb0-5d87-47d8-8071-02d1daaf176b",
+      "name": "Enviar texto",
+      "credentials": {
+        "evolutionApi": {
+          "id": "jcphnfzGjPkrP0Nf",
+          "name": "HousinhoBot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "974ad2cf-7cca-4035-8fda-f2b2076b2ac6",
+              "name": "body.solicitacao.numero_cliente",
+              "value": "={{ $json.body.solicitacao.numero_cliente }}",
+              "type": "string"
+            },
+            {
+              "id": "94bdc655-73e8-4423-8b08-ee4b6ef073dc",
+              "name": "body.solicitacao.detalhes_solicitacao.titulo_video",
+              "value": "={{ $json.body.solicitacao.detalhes_solicitacao.titulo_video }}",
+              "type": "string"
+            },
+            {
+              "id": "28ee337a-56a1-4ac8-8a3a-506b1b7bcbb2",
+              "name": "body.motivo_cancelamento",
+              "value": "={{ $json.body.motivo_cancelamento }}",
+              "type": "string"
+            },
+            {
+              "id": "fc34e89a-0ec8-432d-9e03-cf6a55146ef4",
+              "name": "body.solicitacao.nome",
+              "value": "={{ $json.body.solicitacao.nome }}",
+              "type": "string"
+            },
+            {
+              "id": "8e9efccd-0e75-4539-8b2c-f67032fa927c",
+              "name": "body.solicitacao.detalhes_solicitacao.texto_fundamental",
+              "value": "={{ $json.body.solicitacao.detalhes_solicitacao.texto_fundamental }}",
+              "type": "string"
+            },
+            {
+              "id": "923f618a-8ff3-42ac-8c19-87bbf023ec57",
+              "name": "body.solicitacao.id",
+              "value": "={{ $json.body.solicitacao.id }}",
+              "type": "number"
+            },
+            {
+              "id": "971c374b-dbba-4661-b119-1f68174559dd",
+              "name": "body.solicitacao.tipo_pedido",
+              "value": "={{ $json.body.solicitacao.tipo_pedido }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -96,
+        0
+      ],
+      "id": "d924cc7f-fff0-4845-b357-fc67f6a6dda8",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "UPDATE solicitacoes_design\nSET status_interno = 'Recusado',\n motivo_cancelamento = '{{ $('Edit Fields').item.json.body.motivo_cancelamento }}'\nWHERE id = {{ $('Edit Fields').item.json.body.solicitacao.id }};",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.mySql",
+      "typeVersion": 2.5,
+      "position": [
+        400,
+        -96
+      ],
+      "id": "756016b0-ca16-441d-91e2-a42654701166",
+      "name": "Execute a SQL query",
+      "credentials": {
+        "mySql": {
+          "id": "eHBb7SGQq9KSA7SC",
+          "name": "TCC ATUALIZADO"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.body.solicitacao.tipo_pedido }}",
+                    "rightValue": "design",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "5dca0711-a8ee-4d5e-9ea3-59b71df2fe51"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "design"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "0f38242e-de0f-408e-8adc-e0f03363c835",
+                    "leftValue": "={{ $json.body.solicitacao.tipo_pedido }}",
+                    "rightValue": "video",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "video"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        128,
+        16
+      ],
+      "id": "a06d22e9-fcad-4863-975a-ad928574b199",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "UPDATE solicitacoes_video\nSET status_interno = 'Recusado',\n   motivo_cancelamento = '{{ $('Edit Fields').item.json.body.motivo_cancelamento }}'\nWHERE id = {{ $('Edit Fields').item.json.body.solicitacao.id }};",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.mySql",
+      "typeVersion": 2.5,
+      "position": [
+        416,
+        80
+      ],
+      "id": "b107055c-ce3c-44da-8a80-477bcce63bf7",
+      "name": "Execute a SQL query1",
+      "credentials": {
+        "mySql": {
+          "id": "eHBb7SGQq9KSA7SC",
+          "name": "TCC ATUALIZADO"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "messages-api",
+        "instanceName": "housebot",
+        "remoteJid": "={{ $('Edit Fields').item.json.body.solicitacao.numero_cliente }}",
+        "messageText": "=Olá, {{ $('Edit Fields').item.json.body.solicitacao.nome }}! Tudo bem?\n\nSobre a sua solicitação \"{{ $('Edit Fields').item.json.body.solicitacao.detalhes_solicitacao.titulo_video }}{{ $('Edit Fields').item.json.body.solicitacao.detalhes_solicitacao.texto_fundamental }}\", ela precisou ser recusada.\n\nMotivo: *{{ $('Edit Fields').item.json.body.motivo_cancelamento }}*\n\nSe tiver alguma dúvida, pode me chamar aqui. Abraço!",
+        "options_message": {}
+      },
+      "type": "n8n-nodes-evolution-api.evolutionApi",
+      "typeVersion": 1,
+      "position": [
+        656,
+        80
+      ],
+      "id": "aa78b149-1db3-4150-98c6-1f98dc5e251c",
+      "name": "Enviar texto1",
+      "credentials": {
+        "evolutionApi": {
+          "id": "jcphnfzGjPkrP0Nf",
+          "name": "HousinhoBot"
+        }
+      }
+    }
+  ],
+  "pinData": {
+    "Webhook": [
+      {
+        "json": {
+          "headers": {
+            "host": "sistema-crescer-n8n.vuvd0x.easypanel.host",
+            "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36",
+            "content-length": "801",
+            "accept": "*/*",
+            "accept-encoding": "gzip, deflate, br, zstd",
+            "accept-language": "pt-BR,pt;q=0.9,en-US;q=0.8,en;q=0.7",
+            "content-type": "application/json",
+            "origin": "http://localhost",
+            "priority": "u=1, i",
+            "referer": "http://localhost/",
+            "sec-ch-ua": "\"Chromium\";v=\"140\", \"Not=A?Brand\";v=\"24\", \"Google Chrome\";v=\"140\"",
+            "sec-ch-ua-mobile": "?0",
+            "sec-ch-ua-platform": "\"Windows\"",
+            "sec-fetch-dest": "empty",
+            "sec-fetch-mode": "cors",
+            "sec-fetch-site": "cross-site",
+            "x-forwarded-for": "177.26.245.127",
+            "x-forwarded-host": "sistema-crescer-n8n.vuvd0x.easypanel.host",
+            "x-forwarded-port": "443",
+            "x-forwarded-proto": "https",
+            "x-forwarded-server": "4b3b96a4fe4b",
+            "x-real-ip": "177.26.245.127"
+          },
+          "params": {},
+          "query": {},
+          "body": {
+            "solicitacao": {
+              "id": 3,
+              "nome": "Leonardo Martinelli de Oliveira Lima",
+              "numero_cliente": "5512996415762",
+              "email_cliente": "hypedleo1@gmail.com",
+              "ministerio": "Adoração",
+              "tipo_pedido": "design",
+              "status": "pendente",
+              "status_interno": "pendente",
+              "data_criacao": "2025-09-30 10:43:42",
+              "trello_card_id": null,
+              "detalhes_solicitacao": {
+                "texto_fundamental": "Adorar a Deus é muito bom",
+                "data_evento": null,
+                "data_entrega_arte": "2025-10-04 15:00:00",
+                "uso_e_objetivo_arte": "Instagram",
+                "publico_alcancado": "Para todos",
+                "imagem_referencia": "",
+                "formatos_entrega": [
+                  "[1920x1080]"
+                ],
+                "arquivos_necessarios": [
+                  "[nenhum]"
+                ],
+                "email_aprovacao_orcamento": "hypedleo1@gmail.com",
+                "link_qr_code": "",
+                "observacoes_complementares": "Faça uma arte com as fotos da vigília de primavera bem legal e bacana"
+              }
+            },
+            "motivo_cancelamento": "Duplicação"
+          },
+          "webhookUrl": "https://sistema-crescer-n8n.vuvd0x.easypanel.host/webhook/cancelar-solicitacao",
+          "executionMode": "production"
+        }
+      }
+    ]
+  },
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Execute a SQL query": {
+      "main": [
+        [
+          {
+            "node": "Enviar texto",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Execute a SQL query",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Execute a SQL query1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Execute a SQL query1": {
+      "main": [
+        [
+          {
+            "node": "Enviar texto1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "905b6abb-41e4-4bc7-9b43-ecfa38c2a18b",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "6b305a80a5187e2b6854af9a2913f91761217b913e9306fbccc703124236b512"
+  },
+  "id": "23C1253RcUyJr3bs",
+  "tags": [
+    {
+      "createdAt": "2025-07-29T20:56:11.852Z",
+      "updatedAt": "2025-07-29T20:56:11.852Z",
+      "id": "J6QNO6qDuMb8V4Jm",
+      "name": "TCC"
+    }
+  ]
+}

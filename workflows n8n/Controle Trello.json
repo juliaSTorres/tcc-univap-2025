@@ -1,0 +1,1687 @@
+{
+  "name": "Controle Trello",
+  "nodes": [
+    {
+      "parameters": {
+        "listId": "={{ $('pesquisa ID trello').item.json.list_video_id }}",
+        "name": "={{ $('DADOS VIDEO').item.json.titulo_video }}",
+        "description": "=Ministério: {{ $('DADOS VIDEO').item.json.ministerio }}\n\nDuração Vídeo: {{$('DADOS VIDEO').item.json.tempo_duracao_video }}\n\nOnde passara o vídeo: {{ $('DADOS VIDEO').item.json.onde_passara_video }}\n\nPublico alvo : {{ $('DADOS VIDEO').item.json.publico_alvo_video }}\n\nVideo referencia: {{ $('DADOS VIDEO').item.json.referencia_video }}\n\nFonte imagens: {{ $('DADOS VIDEO').item.json.fonte_imagens }}\n\nRoteiro video: {{ $('DADOS VIDEO').item.json.roteiro_video }}\n\n\n-------  Informações pedido  ------\n{{ $('DADOS VIDEO').item.json.nome }}\n{{ $('DADOS VIDEO').item.json.numero }}\n{{ $('DADOS VIDEO').item.json.email }}\nID PEDIDO: {{ $('DADOS VIDEO').item.json.id_pedido }}\nTIPO PEDIDO: {{ $('DADOS VIDEO').item.json.tipo_pedido }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.trello",
+      "typeVersion": 1,
+      "position": [
+        1040,
+        112
+      ],
+      "id": "1a22de86-f3ec-47bc-8cc2-0ed78fc6040d",
+      "name": "Create Card Video",
+      "credentials": {
+        "trelloApi": {
+          "id": "iwnfHSRANh4dBsed",
+          "name": "Trello account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "listId": "={{ $('pesquisa ID trello').item.json.list_design_id }}",
+        "name": "={{ $json.texto_fundamental }}",
+        "description": "=Ministério:{{ $json.ministerio }}\n\n\nUso e objetivo: {{ $json.uso_e_objetivo_arte }}\n\nPublico alvo: {{ $json.publico_alcancado }}\n\nformato de entrega: {{ $json.formatos_entrega }}\n\n\n{{ $json.observacoes_complementares }}\n-------  Informações pedido  ------\n{{ $json.nome }}\n{{ $json.numero }}\n{{ $json.email }}\nID PEDIDO: {{ $json.id_pedido }}\nTIPO PEDIDO: {{ $json.tipo_pedido }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.trello",
+      "typeVersion": 1,
+      "position": [
+        1040,
+        912
+      ],
+      "id": "a1a825dc-f7ca-4dff-80a7-53127b54b3cb",
+      "name": "Create Card Desing",
+      "credentials": {
+        "trelloApi": {
+          "id": "iwnfHSRANh4dBsed",
+          "name": "Trello account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "086ec2d2-e87a-43c2-8102-acdc074bee6a",
+              "leftValue": "={{ $('RECEBER DADOS').item.json.body.tipo_pedido }}",
+              "rightValue": "video",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        160,
+        512
+      ],
+      "id": "17e024a4-7ceb-49b3-820e-601baeff84c5",
+      "name": "Verificação Video/Desing"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "63b99f37-1432-4ce6-9bb3-2804b3b55fc0",
+              "leftValue": "={{ $json.imagem_referencia }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "empty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        832,
+        704
+      ],
+      "id": "7e8fbf20-e8c1-4722-947a-d89d260d456e",
+      "name": "Verificação Imagem Referencia"
+    },
+    {
+      "parameters": {
+        "resource": "attachment",
+        "operation": "create",
+        "cardId": {
+          "__rl": true,
+          "value": "={{ $json.id }}",
+          "mode": "id"
+        },
+        "url": "=https://1a09b3a95cf8.ngrok-free.app{{ $('DADOS DESING').item.json.imagem_referencia }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.trello",
+      "typeVersion": 1,
+      "position": [
+        1264,
+        800
+      ],
+      "id": "6f939d8b-5241-4392-ad0c-6ab291204f10",
+      "name": "Create Imagem Referencia",
+      "credentials": {
+        "trelloApi": {
+          "id": "iwnfHSRANh4dBsed",
+          "name": "Trello account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "listId": "={{ $('pesquisa ID trello').item.json.list_design_id }}",
+        "name": "={{ $json.texto_fundamental }}",
+        "description": "=Ministério:{{ $json.ministerio }}\n\n\nUso e objetivo: {{ $json.uso_e_objetivo_arte }}\n\nPublico alvo: {{ $json.publico_alcancado }}\n\nformato de entrega: {{ $json.formatos_entrega }}\n\n\n{{ $json.observacoes_complementares }}\n-------  Informações pedido  ------\n{{ $json.nome }}\n{{ $json.numero }}\n{{ $json.email }}\nID PEDIDO: {{ $json.id_pedido }}\nTIPO PEDIDO: {{ $json.tipo_pedido }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.trello",
+      "typeVersion": 1,
+      "position": [
+        1040,
+        512
+      ],
+      "id": "14a7e7af-2e53-4fdf-9c4c-dfa3959e2035",
+      "name": "Create Card Desing1",
+      "credentials": {
+        "trelloApi": {
+          "id": "iwnfHSRANh4dBsed",
+          "name": "Trello account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "id": {
+          "__rl": true,
+          "value": "={{ $json.id }}",
+          "mode": "id"
+        },
+        "updateFields": {
+          "due": "={{ $('DADOS DESING').item.json.data_entrega_arte }}-03:00"
+        }
+      },
+      "type": "n8n-nodes-base.trello",
+      "typeVersion": 1,
+      "position": [
+        1264,
+        400
+      ],
+      "id": "4f8c4d39-9d84-4fa0-84ec-45b4535c0d62",
+      "name": "Atualizar Data Entrega",
+      "credentials": {
+        "trelloApi": {
+          "id": "iwnfHSRANh4dBsed",
+          "name": "Trello account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "id": {
+          "__rl": true,
+          "value": "={{ $('Create Card Desing').item.json.id }}",
+          "mode": "id"
+        },
+        "updateFields": {
+          "due": "={{ $('DADOS DESING').item.json.data_entrega_arte }}-03:00"
+        }
+      },
+      "type": "n8n-nodes-base.trello",
+      "typeVersion": 1,
+      "position": [
+        1488,
+        800
+      ],
+      "id": "597b19a1-97a9-4bc7-9aff-2467ab93631f",
+      "name": "Atualizar Data Entrega1",
+      "credentials": {
+        "trelloApi": {
+          "id": "iwnfHSRANh4dBsed",
+          "name": "Trello account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "id": {
+          "__rl": true,
+          "value": "={{ $json.id }}",
+          "mode": "id"
+        },
+        "updateFields": {
+          "due": "={{ $('DADOS VIDEO').item.json.data_entrega_video }}-03:00"
+        }
+      },
+      "type": "n8n-nodes-base.trello",
+      "typeVersion": 1,
+      "position": [
+        1264,
+        0
+      ],
+      "id": "49082ed7-b036-4622-82d2-f706de12d032",
+      "name": "Atualizar Data Entrega2",
+      "credentials": {
+        "trelloApi": {
+          "id": "iwnfHSRANh4dBsed",
+          "name": "Trello account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "list",
+        "operation": "get",
+        "id": "={{ $json.idList }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.trello",
+      "typeVersion": 1,
+      "position": [
+        1264,
+        608
+      ],
+      "id": "257ac293-13af-49e7-bcba-5e7c280a2b83",
+      "name": "Get a list",
+      "credentials": {
+        "trelloApi": {
+          "id": "iwnfHSRANh4dBsed",
+          "name": "Trello account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "list",
+        "operation": "get",
+        "id": "={{ $json.idList }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.trello",
+      "typeVersion": 1,
+      "position": [
+        1264,
+        1008
+      ],
+      "id": "0b8f0c6c-cf75-4b02-a0f0-3fdadaf7a0c0",
+      "name": "Get a list1",
+      "credentials": {
+        "trelloApi": {
+          "id": "iwnfHSRANh4dBsed",
+          "name": "Trello account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "list",
+        "operation": "get",
+        "id": "={{ $json.idList }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.trello",
+      "typeVersion": 1,
+      "position": [
+        1264,
+        208
+      ],
+      "id": "224217d1-26b6-4604-9c65-34cfe208a6d2",
+      "name": "Get a list2",
+      "credentials": {
+        "trelloApi": {
+          "id": "iwnfHSRANh4dBsed",
+          "name": "Trello account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## Controle Trello\n",
+        "height": 1280,
+        "width": 2432
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -560,
+        -80
+      ],
+      "typeVersion": 1,
+      "id": "e7ac22f7-d197-428d-994d-ab5fed6b8c18",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "receber-dados",
+        "options": {
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Access-Control-Allow-Origin",
+                "value": "*"
+              },
+              {
+                "name": "Access-Control-Allow-Methods",
+                "value": "GET, POST, OPTIONS, PUT, DELETE"
+              },
+              {
+                "name": "Access-Control-Allow-Headers",
+                "value": "Origin, X-Requested-With, Content-Type, Accept"
+              }
+            ]
+          }
+        }
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -368,
+        512
+      ],
+      "id": "d4e914fd-7f73-4285-8e05-69ee63c33d0e",
+      "name": "RECEBER DADOS",
+      "webhookId": "8822f4f7-f0a4-4491-8d75-008862e0ab5d"
+    },
+    {
+      "parameters": {
+        "id": "=685ab40d6abe284020815316"
+      },
+      "type": "n8n-nodes-base.trelloTrigger",
+      "typeVersion": 1,
+      "position": [
+        256,
+        1408
+      ],
+      "id": "8744058f-11d3-44f8-841b-5967adebe067",
+      "name": "Trello Trigger",
+      "webhookId": "1ac6bd65-64a6-48a8-9f2d-133ec1244d40",
+      "credentials": {
+        "trelloApi": {
+          "id": "iwnfHSRANh4dBsed",
+          "name": "Trello account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "id": {
+          "__rl": true,
+          "value": "={{ $json.action.data.card.shortLink }}",
+          "mode": "id"
+        },
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.trello",
+      "typeVersion": 1,
+      "position": [
+        480,
+        1408
+      ],
+      "id": "00014ce3-5c7e-4593-8bed-8eee481e2f3d",
+      "name": "Get a card1",
+      "credentials": {
+        "trelloApi": {
+          "id": "iwnfHSRANh4dBsed",
+          "name": "Trello account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "list",
+        "operation": "get",
+        "id": "={{ $json.idList }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.trello",
+      "typeVersion": 1,
+      "position": [
+        704,
+        1408
+      ],
+      "id": "c7b7ba28-26ed-4057-bf44-4710f7dc8394",
+      "name": "Get a list4",
+      "credentials": {
+        "trelloApi": {
+          "id": "iwnfHSRANh4dBsed",
+          "name": "Trello account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "94145d5a-af0f-46e6-8788-92c1f896141e",
+              "name": "solicitacao_id",
+              "value": "={{ $('Get a card1').item.json.desc.split('\\n').slice(-2)[0].split('ID PEDIDO:')[1].trim() }}",
+              "type": "string"
+            },
+            {
+              "id": "bf556a3e-8358-4012-aca8-f630ed8a175e",
+              "name": "tipo_pedido",
+              "value": "={{ $('Get a card1').item.json.desc.split('\\n').slice(-1)[0].split('TIPO PEDIDO:')[1].trim().toLowerCase() }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        912,
+        1408
+      ],
+      "id": "84c182c5-2736-4d1c-8e7a-50965f8eca6c",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "teste-whatsap",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        2272,
+        848
+      ],
+      "id": "d6818270-7300-4d7c-b467-7d8d4208f65e",
+      "name": "Webhook1",
+      "webhookId": "4c7c4635-3a38-4032-a2de-a334d2aa3ddc"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "beea06ee-80d6-4006-af91-86b616abf83e",
+              "name": "image_base64",
+              "value": "={{ $json.body.data.message.base64 }}",
+              "type": "string"
+            },
+            {
+              "id": "a833b4e0-1a94-4914-9bac-1129d26a5137",
+              "name": "image_url",
+              "value": "={{ $json.body.data.message.imageMessage.url }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2576,
+        864
+      ],
+      "id": "61c3dce7-e575-4edf-b057-e2e38dbdaaf9",
+      "name": "Edit Fields3"
+    },
+    {
+      "parameters": {
+        "jsCode": "const base64 = $input.first().json.image_base64;\nconst cardId = \"3ifycqH7\";\n\nreturn [\n  {\n    json: {\n      id_card: cardId\n    },\n    binary: {\n      data: {\n        data: base64,\n        mimeType: \"image/png\", // ou \"image/jpeg\"\n        fileName: \"imagem.png\"\n      }\n    }\n  }\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2912,
+        864
+      ],
+      "id": "b2e28e37-3064-4e53-aa9c-888241812590",
+      "name": "Code1"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://api.trello.com/1/cards/{{$json[\"id_card\"]}}/attachments",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "trelloApi",
+        "sendBody": true,
+        "contentType": "multipart-form-data",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "parameterType": "formBinaryData",
+              "name": "file",
+              "inputDataFieldName": "data"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        3120,
+        880
+      ],
+      "id": "ecec2c74-e8ef-467f-a4c4-3c89911793a0",
+      "name": "HTTP Request3",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "1cca38f5-857d-4ca9-9ddf-01c2356f2d0b",
+              "name": "id_pedido",
+              "value": "={{ $('RECEBER DADOS').item.json.body.id }}",
+              "type": "string"
+            },
+            {
+              "id": "0b281e6d-9a00-4f60-9cf9-488ff6aa5624",
+              "name": "nome",
+              "value": "={{ $('RECEBER DADOS').item.json.body.nome }}",
+              "type": "string"
+            },
+            {
+              "id": "9c36318d-d14f-4011-8ac5-e7f38a33be6c",
+              "name": "numero",
+              "value": "={{ $('RECEBER DADOS').item.json.body.numero_cliente }}",
+              "type": "string"
+            },
+            {
+              "id": "30a86e36-67d0-4685-ae3f-d0b13c2fa619",
+              "name": "email",
+              "value": "={{ $('RECEBER DADOS').item.json.body.email_cliente }}",
+              "type": "string"
+            },
+            {
+              "id": "70271689-dd6a-4558-bf3e-5e55405544a1",
+              "name": "ministerio",
+              "value": "={{ $('RECEBER DADOS').item.json.body.ministerio }}",
+              "type": "string"
+            },
+            {
+              "id": "ef616b59-2b1d-451c-a841-23f2716ebdbf",
+              "name": "tipo_pedido",
+              "value": "={{ $('RECEBER DADOS').item.json.body.tipo_pedido }}",
+              "type": "string"
+            },
+            {
+              "id": "a46d2a13-f29f-4ba6-90fb-6199cfcf9292",
+              "name": "status",
+              "value": "={{ $('RECEBER DADOS').item.json.body.status }}",
+              "type": "string"
+            },
+            {
+              "id": "6f5fac01-666e-4ea4-9835-68f8b13a679d",
+              "name": "data_criacao",
+              "value": "={{ $('RECEBER DADOS').item.json.body.data_criacao }}",
+              "type": "string"
+            },
+            {
+              "id": "cd3fd648-e784-4f64-8654-e1cd44408d6c",
+              "name": "texto_fundamental",
+              "value": "={{ $('RECEBER DADOS').item.json.body.detalhes_solicitacao.texto_fundamental }}",
+              "type": "string"
+            },
+            {
+              "id": "a3e5249d-e263-4e92-b334-628166f828be",
+              "name": "deta_evento",
+              "value": "={{ $('RECEBER DADOS').item.json.body.detalhes_solicitacao.data_evento }}",
+              "type": "string"
+            },
+            {
+              "id": "bb04590b-bd05-45e9-b4e6-6890e414bb48",
+              "name": "data_entrega_arte",
+              "value": "={{ $('RECEBER DADOS').item.json.body.detalhes_solicitacao.data_entrega_arte }}",
+              "type": "string"
+            },
+            {
+              "id": "baec30ac-1f04-40ea-a78d-837bfc889e4f",
+              "name": "uso_e_objetivo_arte",
+              "value": "={{ $('RECEBER DADOS').item.json.body.detalhes_solicitacao.uso_e_objetivo_arte }}",
+              "type": "string"
+            },
+            {
+              "id": "2d9935b0-fefb-4e93-a1a8-7c5c71c0e796",
+              "name": "publico_alcancado",
+              "value": "={{ $('RECEBER DADOS').item.json.body.detalhes_solicitacao.publico_alcancado }}",
+              "type": "string"
+            },
+            {
+              "id": "46455bc9-6886-4bd7-851b-43c1d048310e",
+              "name": "imagem_referencia",
+              "value": "={{ $('RECEBER DADOS').item.json.body.detalhes_solicitacao.imagem_referencia }}",
+              "type": "string"
+            },
+            {
+              "id": "9c9ae948-97de-47fe-bc0c-5486035ced2a",
+              "name": "formatos_entrega",
+              "value": "={{ $('RECEBER DADOS').item.json.body.detalhes_solicitacao.formatos_entrega }}",
+              "type": "array"
+            },
+            {
+              "id": "4af55e77-1bfb-4708-9a12-659551c16296",
+              "name": "email_aprovacao_orcamento",
+              "value": "={{ $('RECEBER DADOS').item.json.body.detalhes_solicitacao.email_aprovacao_orcamento }}",
+              "type": "string"
+            },
+            {
+              "id": "82637ea8-7663-4a1f-a92b-a174f31846e1",
+              "name": "link_qr_code",
+              "value": "={{ $('RECEBER DADOS').item.json.body.detalhes_solicitacao.link_qr_code }}",
+              "type": "string"
+            },
+            {
+              "id": "08835433-25ed-41b1-b0f8-b5603778d54b",
+              "name": "observacoes_complementares",
+              "value": "={{ $('RECEBER DADOS').item.json.body.detalhes_solicitacao.observacoes_complementares }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        560,
+        672
+      ],
+      "id": "bece8051-ae55-46e9-b602-e157991e7b12",
+      "name": "DADOS DESING"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "1cca38f5-857d-4ca9-9ddf-01c2356f2d0b",
+              "name": "id_pedido",
+              "value": "={{ $('RECEBER DADOS').item.json.body.id }}",
+              "type": "string"
+            },
+            {
+              "id": "0b281e6d-9a00-4f60-9cf9-488ff6aa5624",
+              "name": "nome",
+              "value": "={{ $('RECEBER DADOS').item.json.body.nome }}",
+              "type": "string"
+            },
+            {
+              "id": "9c36318d-d14f-4011-8ac5-e7f38a33be6c",
+              "name": "numero",
+              "value": "={{ $('RECEBER DADOS').item.json.body.numero_cliente }}",
+              "type": "string"
+            },
+            {
+              "id": "30a86e36-67d0-4685-ae3f-d0b13c2fa619",
+              "name": "email",
+              "value": "={{ $('RECEBER DADOS').item.json.body.email_cliente }}",
+              "type": "string"
+            },
+            {
+              "id": "70271689-dd6a-4558-bf3e-5e55405544a1",
+              "name": "ministerio",
+              "value": "={{ $('RECEBER DADOS').item.json.body.ministerio }}",
+              "type": "string"
+            },
+            {
+              "id": "ef616b59-2b1d-451c-a841-23f2716ebdbf",
+              "name": "tipo_pedido",
+              "value": "={{ $('RECEBER DADOS').item.json.body.tipo_pedido }}",
+              "type": "string"
+            },
+            {
+              "id": "a46d2a13-f29f-4ba6-90fb-6199cfcf9292",
+              "name": "status",
+              "value": "={{ $('RECEBER DADOS').item.json.body.status }}",
+              "type": "string"
+            },
+            {
+              "id": "6f5fac01-666e-4ea4-9835-68f8b13a679d",
+              "name": "data_criacao",
+              "value": "={{ $('RECEBER DADOS').item.json.body.data_criacao }}",
+              "type": "string"
+            },
+            {
+              "id": "b9add4f8-37dd-4ee1-b10e-ff034f0cbb1b",
+              "name": "titulo_video",
+              "value": "={{ $('RECEBER DADOS').item.json.body.detalhes_solicitacao.titulo_video }}",
+              "type": "string"
+            },
+            {
+              "id": "c953a822-7c64-4b4a-b201-2db1c8ae0c43",
+              "name": "tempo_duracao_video",
+              "value": "={{ $('RECEBER DADOS').item.json.body.detalhes_solicitacao.tempo_duracao_video }}",
+              "type": "string"
+            },
+            {
+              "id": "79afe3f9-135b-4b03-b5ad-b40182b49288",
+              "name": "onde_passara_video",
+              "value": "={{ $('RECEBER DADOS').item.json.body.detalhes_solicitacao.onde_passara_video }}",
+              "type": "string"
+            },
+            {
+              "id": "06a56ad7-b20a-4ca2-8995-9c0b16d67921",
+              "name": "data_entrega_video",
+              "value": "={{ $('RECEBER DADOS').item.json.body.detalhes_solicitacao.data_entrega_video }}",
+              "type": "string"
+            },
+            {
+              "id": "ed2a564f-8a72-4a00-b705-9652985d9d2d",
+              "name": "referencia_video",
+              "value": "={{ $('RECEBER DADOS').item.json.body.detalhes_solicitacao.referencia_video }}",
+              "type": "string"
+            },
+            {
+              "id": "d5ea4e13-5a0d-4dbf-b7e7-0070c38e946e",
+              "name": "publico_alvo_video",
+              "value": "={{ $('RECEBER DADOS').item.json.body.detalhes_solicitacao.publico_alvo_video }}",
+              "type": "string"
+            },
+            {
+              "id": "51e0052d-90fe-4da3-bdd0-3864811f0a89",
+              "name": "fonte_imagens",
+              "value": "={{ $('RECEBER DADOS').item.json.body.detalhes_solicitacao.fonte_imagens }}",
+              "type": "string"
+            },
+            {
+              "id": "9d04d5e0-03b3-450f-88f5-bc959c7868db",
+              "name": "roteiro_video",
+              "value": "={{ $('RECEBER DADOS').item.json.body.detalhes_solicitacao.roteiro_video }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        592,
+        448
+      ],
+      "id": "c8ec6293-e980-4bab-a060-e155b8119476",
+      "name": "DADOS VIDEO"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "UPDATE solicitacoes_video\nSET trello_card_id = '{{ $('Create Card Video').item.json.id }}', status = '{{ $json.name }}' WHERE id = {{ $('DADOS VIDEO').item.json.id_pedido }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.mySql",
+      "typeVersion": 2.4,
+      "position": [
+        1648,
+        208
+      ],
+      "id": "04d5f6b0-69f2-4399-8933-c266a2317188",
+      "name": "Atualiza ID",
+      "credentials": {
+        "mySql": {
+          "id": "eHBb7SGQq9KSA7SC",
+          "name": "TCC ATUALIZADO"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "UPDATE solicitacoes_design\nSET trello_card_id = '{{ $('Create Card Desing1').item.json.id }}', status = '{{ $json.name }}' WHERE id = {{ $('DADOS DESING').item.json.id_pedido }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.mySql",
+      "typeVersion": 2.4,
+      "position": [
+        1504,
+        592
+      ],
+      "id": "4b22900b-994b-4b7e-840c-d355d0faf941",
+      "name": "Atualiza ID1",
+      "credentials": {
+        "mySql": {
+          "id": "eHBb7SGQq9KSA7SC",
+          "name": "TCC ATUALIZADO"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "UPDATE solicitacoes_design\nSET trello_card_id = '{{ $('Create Card Desing').item.json.id }}', status = '{{ $json.name }}' WHERE id = {{ $('DADOS DESING').item.json.id_pedido }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.mySql",
+      "typeVersion": 2.4,
+      "position": [
+        1504,
+        1008
+      ],
+      "id": "5c05ed8b-d8d5-4dcd-b4fc-db632fe682c0",
+      "name": "Atualiza ID2",
+      "credentials": {
+        "mySql": {
+          "id": "eHBb7SGQq9KSA7SC",
+          "name": "TCC ATUALIZADO"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "UPDATE solicitacoes_{{ $json.tipo_pedido }}\nSET trello_card_id = '{{ $('Get a card1').item.json.id }}', status = '{{ $('Get a list4').item.json.name }}' WHERE id = {{ $json.solicitacao_id }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.mySql",
+      "typeVersion": 2.4,
+      "position": [
+        1232,
+        1408
+      ],
+      "id": "64ed787b-61fc-4f13-b6eb-879f743cf521",
+      "name": "Atualiza ID3",
+      "credentials": {
+        "mySql": {
+          "id": "eHBb7SGQq9KSA7SC",
+          "name": "TCC ATUALIZADO"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://host.docker.internal:8080/message/sendText/housebot",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "number",
+              "value": "={{ $('DADOS VIDEO').item.json.numero }}"
+            },
+            {
+              "name": "text",
+              "value": "=🎉🎉 *SOLICITAÇÃO ACEITA* 🎉🎉\n\n*{{ $('DADOS VIDEO').item.json.nome.split(' ')[0] }}*, sua solicitação foi *aceita* e esta no quadro dos nossos *designers*!! 😊📈\n\nPara *acompanhar seu pedido* acesse o link abaixo e *insira* o seu código de pedido. 😉\n\n*Deus abençoe!! 🙏😎*\n\n\nhttp://localhost/solicitacoes_mvc/public/cliente_rastreamento.html\n\nCódigo do pedido:"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2480,
+        80
+      ],
+      "id": "264bb458-9e6c-445e-a4ce-9f1ffacd019d",
+      "name": "HTTP Request",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "71ei1KTP4WnBaEI5",
+          "name": "Mercado Pago"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://host.docker.internal:8080/message/sendText/housebot",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "number",
+              "value": "={{ $('DADOS DESING').item.json.numero }}"
+            },
+            {
+              "name": "text",
+              "value": "=🎉🎉 *SOLICITAÇÃO ACEITA* 🎉🎉\n\n*{{ $('DADOS DESING').item.json.nome.split(' ')[0] }}*, sua solicitação foi *aceita* e esta no quadro dos nossos *designers*!! 😊📈\n\nPara *acompanhar seu pedido* acesse o link abaixo e *insira* o seu código de pedido. 😉\n\n*Deus abençoe!! 🙏😎*\n\n\nhttp://localhost/solicitacoes_mvc/public/cliente_rastreamento.html\n\nCódigo do pedido:"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1936,
+        464
+      ],
+      "id": "74e5dd3b-091a-4406-9ed7-a715f8795b7d",
+      "name": "HTTP Request1",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "71ei1KTP4WnBaEI5",
+          "name": "Mercado Pago"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://host.docker.internal:8080/message/sendText/housebot",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "number",
+              "value": "={{ $('DADOS DESING').item.json.numero }}"
+            },
+            {
+              "name": "text",
+              "value": "=*{{ $('Create Card Desing1').item.json.id }}*"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2240,
+        480
+      ],
+      "id": "777c9801-a3c9-412c-94ce-ea3074061c27",
+      "name": "HTTP Request7",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "71ei1KTP4WnBaEI5",
+          "name": "Mercado Pago"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://host.docker.internal:8080/message/sendText/housebot",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "number",
+              "value": "={{ $('DADOS DESING').item.json.numero }}"
+            },
+            {
+              "name": "text",
+              "value": "=🎉🎉 *SOLICITAÇÃO ACEITA* 🎉🎉\n\n*{{ $('DADOS DESING').item.json.nome .split(' ')[0]}}*, sua solicitação foi *aceita* e esta no quadro dos nossos *designers*!! 😊📈\n\nPara *acompanhar seu pedido* acesse o link abaixo e *insira* o seu código de pedido. 😉\n\n*Deus abençoe!! 🙏😎*\n\n\nhttp://localhost/solicitacoes_mvc/public/cliente_rastreamento.html\n\nCódigo do pedido:"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2032,
+        1024
+      ],
+      "id": "4878765e-1a55-4cbf-9804-6ee221d4f640",
+      "name": "HTTP Request2",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "71ei1KTP4WnBaEI5",
+          "name": "Mercado Pago"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://host.docker.internal:8080/message/sendText/housebot",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "number",
+              "value": "={{ $('DADOS DESING').item.json.numero }}"
+            },
+            {
+              "name": "text",
+              "value": "=*{{ $('Create Card Desing').item.json.id }}*"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2272,
+        1024
+      ],
+      "id": "b5e46fce-d9dc-4b23-9f23-22abb363ec66",
+      "name": "HTTP Request8",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "71ei1KTP4WnBaEI5",
+          "name": "Mercado Pago"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT list_design_id\nFROM trello_configurations;",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.mySql",
+      "typeVersion": 2.4,
+      "position": [
+        800,
+        272
+      ],
+      "id": "617001ba-d890-450d-98b2-9be87673ac84",
+      "name": "Execute a SQL query",
+      "credentials": {
+        "mySql": {
+          "id": "eHBb7SGQq9KSA7SC",
+          "name": "TCC ATUALIZADO"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "messages-api",
+        "instanceName": "housebot",
+        "remoteJid": "={{ $('DADOS VIDEO').item.json.numero }}",
+        "messageText": "=🎉🎉 *SOLICITAÇÃO ACEITA* 🎉🎉\n\n*{{ $('DADOS VIDEO').item.json.nome.split(' ')[0] }}*, sua solicitação foi *aceita* e esta no quadro dos nossos *designers*!! 😊📈\n\nPara *acompanhar seu pedido* acesse o link abaixo e *insira* o seu código de pedido. 😉\n\n*Deus abençoe!! 🙏😎*\n\n\nhttp://localhost/solicitacoes_mvc/public/cliente_rastreamento.html\n\nCódigo do pedido:",
+        "options_message": {}
+      },
+      "type": "n8n-nodes-evolution-api.evolutionApi",
+      "typeVersion": 1,
+      "position": [
+        1872,
+        208
+      ],
+      "id": "83d1999b-8e17-45fe-b812-4e3c2dd40f17",
+      "name": "Enviar texto",
+      "credentials": {
+        "evolutionApi": {
+          "id": "jcphnfzGjPkrP0Nf",
+          "name": "HousinhoBot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "messages-api",
+        "instanceName": "housebot",
+        "remoteJid": "={{ $('DADOS DESING').item.json.numero }}",
+        "messageText": "=🎉🎉 *SOLICITAÇÃO ACEITA* 🎉🎉\n\n*{{ $('DADOS DESING').item.json.nome.split(' ')[0] }}*, sua solicitação foi *aceita* e esta no quadro dos nossos *designers*!! 😊📈\n\nPara *acompanhar seu pedido* acesse o link abaixo e *insira* o seu código de pedido. 😉\n\n*Deus abençoe!! 🙏😎*\n\n\nhttp://localhost/solicitacoes_mvc/public/cliente_rastreamento.html\n\nCódigo do pedido:",
+        "options_message": {}
+      },
+      "type": "n8n-nodes-evolution-api.evolutionApi",
+      "typeVersion": 1,
+      "position": [
+        1728,
+        592
+      ],
+      "id": "0737bb67-0e5a-41b1-9868-b5b28c4ca781",
+      "name": "Enviar texto1",
+      "credentials": {
+        "evolutionApi": {
+          "id": "jcphnfzGjPkrP0Nf",
+          "name": "HousinhoBot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "messages-api",
+        "instanceName": "housebot",
+        "remoteJid": "={{ $('DADOS DESING').item.json.numero }}",
+        "messageText": "=*{{ $('Create Card Desing1').item.json.id }}*",
+        "options_message": {}
+      },
+      "type": "n8n-nodes-evolution-api.evolutionApi",
+      "typeVersion": 1,
+      "position": [
+        1920,
+        592
+      ],
+      "id": "32c29f8b-98fd-46f3-828f-e3610be40759",
+      "name": "Enviar texto2",
+      "credentials": {
+        "evolutionApi": {
+          "id": "jcphnfzGjPkrP0Nf",
+          "name": "HousinhoBot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "messages-api",
+        "instanceName": "housebot",
+        "remoteJid": "={{ $('DADOS DESING').item.json.numero }}",
+        "messageText": "=🎉🎉 *SOLICITAÇÃO ACEITA* 🎉🎉\n\n*{{ $('DADOS DESING').item.json.nome .split(' ')[0]}}*, sua solicitação foi *aceita* e esta no quadro dos nossos *designers*!! 😊📈\n\nPara *acompanhar seu pedido* acesse o link abaixo e *insira* o seu código de pedido. 😉\n\n*Deus abençoe!! 🙏😎*\n\n\nhttp://localhost/solicitacoes_mvc/public/cliente_rastreamento.html\n\nCódigo do pedido:",
+        "options_message": {}
+      },
+      "type": "n8n-nodes-evolution-api.evolutionApi",
+      "typeVersion": 1,
+      "position": [
+        1728,
+        1008
+      ],
+      "id": "8c2e198c-b355-48aa-9cce-3fb38eead952",
+      "name": "Enviar texto3",
+      "credentials": {
+        "evolutionApi": {
+          "id": "jcphnfzGjPkrP0Nf",
+          "name": "HousinhoBot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "messages-api",
+        "instanceName": "housebot",
+        "remoteJid": "={{ $('DADOS DESING').item.json.numero }}",
+        "messageText": "=*{{ $('Create Card Desing').item.json.id }}*",
+        "options_message": {}
+      },
+      "type": "n8n-nodes-evolution-api.evolutionApi",
+      "typeVersion": 1,
+      "position": [
+        1936,
+        1008
+      ],
+      "id": "9439d9f0-807e-4961-8a29-159c3abcd105",
+      "name": "Enviar texto4",
+      "credentials": {
+        "evolutionApi": {
+          "id": "jcphnfzGjPkrP0Nf",
+          "name": "HousinhoBot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "select",
+        "table": {
+          "__rl": true,
+          "value": "trello_configurations",
+          "mode": "list",
+          "cachedResultName": "trello_configurations"
+        },
+        "returnAll": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.mySql",
+      "typeVersion": 2.5,
+      "position": [
+        -160,
+        512
+      ],
+      "id": "069fb987-6373-4839-b6e8-7c4f97412165",
+      "name": "pesquisa ID trello",
+      "credentials": {
+        "mySql": {
+          "id": "eHBb7SGQq9KSA7SC",
+          "name": "TCC ATUALIZADO"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "messages-api",
+        "instanceName": "housebot",
+        "remoteJid": "={{ $('DADOS VIDEO').item.json.numero }}",
+        "messageText": "=*{{ $('Create Card Video').item.json.id }}*",
+        "options_message": {}
+      },
+      "type": "n8n-nodes-evolution-api.evolutionApi",
+      "typeVersion": 1,
+      "position": [
+        2096,
+        208
+      ],
+      "id": "81795b3d-0a7c-4bfa-b5c4-f3e88f40c1ca",
+      "name": "Enviar texto5",
+      "credentials": {
+        "evolutionApi": {
+          "id": "jcphnfzGjPkrP0Nf",
+          "name": "HousinhoBot"
+        }
+      }
+    }
+  ],
+  "pinData": {
+    "RECEBER DADOS": [
+      {
+        "json": {
+          "headers": {
+            "host": "sistema-crescer-n8n.vuvd0x.easypanel.host",
+            "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36",
+            "content-length": "1011",
+            "accept": "*/*",
+            "accept-encoding": "gzip, deflate, br, zstd",
+            "accept-language": "pt-BR,pt;q=0.9",
+            "content-type": "application/json",
+            "origin": "http://localhost",
+            "priority": "u=1, i",
+            "referer": "http://localhost/",
+            "sec-ch-ua": "\"Google Chrome\";v=\"141\", \"Not?A_Brand\";v=\"8\", \"Chromium\";v=\"141\"",
+            "sec-ch-ua-mobile": "?0",
+            "sec-ch-ua-platform": "\"Windows\"",
+            "sec-fetch-dest": "empty",
+            "sec-fetch-mode": "cors",
+            "sec-fetch-site": "cross-site",
+            "x-forwarded-for": "177.170.111.61",
+            "x-forwarded-host": "sistema-crescer-n8n.vuvd0x.easypanel.host",
+            "x-forwarded-port": "443",
+            "x-forwarded-proto": "https",
+            "x-forwarded-server": "4b3b96a4fe4b",
+            "x-real-ip": "177.170.111.61"
+          },
+          "params": {},
+          "query": {},
+          "body": {
+            "id": 20,
+            "nome": "Leonardo Martinelli de Oliveira Lima",
+            "numero_cliente": "5512996415762",
+            "email_cliente": "hypedleo1@gmail.com",
+            "ministerio": "Multimidia",
+            "tipo_pedido": "design",
+            "status": "pendente",
+            "status_interno": "pendente",
+            "data_criacao": "2025-10-20 22:41:19",
+            "trello_card_id": null,
+            "detalhes_solicitacao": {
+              "texto_fundamental": "Multimidia a arte da tranmissão",
+              "data_evento": null,
+              "data_entrega_arte": "2025-10-23 00:00:00",
+              "uso_e_objetivo_arte": "Mostrar a arte da transmissão ",
+              "publico_alcancado": "Todos",
+              "imagem_referencia": "",
+              "formatos_entrega": [
+                "[FEED 1080x1080 px",
+                "TELÃO PADRÃO (LATERAL AUDITÓRIO PRINCIPAL) 1920x1080 px",
+                "TELÃO CENTRAL (AUDITÓRIO PRINCIPAL) 3072x768 px",
+                "TELÃO GALERIA 256x512 px",
+                "FLYER A4",
+                "DISPLAY DE MESA A6",
+                "TOTEM (informar quantidade desejada)",
+                "ADESIVO (informar medidas)]"
+              ],
+              "arquivos_necessarios": [
+                "[]"
+              ],
+              "email_aprovacao_orcamento": "hypedleo1@gmail.com",
+              "link_qr_code": "https://www.youtube.com/watch?v=Uw2RR1F6KfI",
+              "observacoes_complementares": "Faça bem legal e bacana"
+            }
+          },
+          "webhookUrl": "https://sistema-crescer-n8n.vuvd0x.easypanel.host/webhook/receber-dados",
+          "executionMode": "production"
+        }
+      }
+    ]
+  },
+  "connections": {
+    "Create Card Video": {
+      "main": [
+        [
+          {
+            "node": "Atualizar Data Entrega2",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Get a list2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Card Desing": {
+      "main": [
+        [
+          {
+            "node": "Create Imagem Referencia",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Get a list1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Verificação Video/Desing": {
+      "main": [
+        [
+          {
+            "node": "DADOS VIDEO",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "DADOS DESING",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Verificação Imagem Referencia": {
+      "main": [
+        [
+          {
+            "node": "Create Card Desing1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Create Card Desing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Imagem Referencia": {
+      "main": [
+        [
+          {
+            "node": "Atualizar Data Entrega1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Card Desing1": {
+      "main": [
+        [
+          {
+            "node": "Atualizar Data Entrega",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Get a list",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get a list": {
+      "main": [
+        [
+          {
+            "node": "Atualiza ID1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get a list1": {
+      "main": [
+        [
+          {
+            "node": "Atualiza ID2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get a list2": {
+      "main": [
+        [
+          {
+            "node": "Atualiza ID",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "RECEBER DADOS": {
+      "main": [
+        [
+          {
+            "node": "pesquisa ID trello",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Trello Trigger": {
+      "main": [
+        [
+          {
+            "node": "Get a card1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get a card1": {
+      "main": [
+        [
+          {
+            "node": "Get a list4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get a list4": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Atualiza ID3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook1": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields3": {
+      "main": [
+        [
+          {
+            "node": "Code1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code1": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "DADOS DESING": {
+      "main": [
+        [
+          {
+            "node": "Verificação Imagem Referencia",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "DADOS VIDEO": {
+      "main": [
+        [
+          {
+            "node": "Execute a SQL query",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Atualiza ID": {
+      "main": [
+        [
+          {
+            "node": "Enviar texto",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Atualiza ID1": {
+      "main": [
+        [
+          {
+            "node": "Enviar texto1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Atualiza ID2": {
+      "main": [
+        [
+          {
+            "node": "Enviar texto3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        []
+      ]
+    },
+    "HTTP Request1": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request7",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request2": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request8",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Execute a SQL query": {
+      "main": [
+        [
+          {
+            "node": "Create Card Video",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Enviar texto1": {
+      "main": [
+        [
+          {
+            "node": "Enviar texto2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Enviar texto3": {
+      "main": [
+        [
+          {
+            "node": "Enviar texto4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "pesquisa ID trello": {
+      "main": [
+        [
+          {
+            "node": "Verificação Video/Desing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Enviar texto": {
+      "main": [
+        [
+          {
+            "node": "Enviar texto5",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Enviar texto2": {
+      "main": [
+        []
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "cd0957fe-30ae-4ad7-8f08-2f2a8d1330a2",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "6b305a80a5187e2b6854af9a2913f91761217b913e9306fbccc703124236b512"
+  },
+  "id": "g3QkV8yaE1Pt0rD4",
+  "tags": [
+    {
+      "createdAt": "2025-07-29T20:56:11.852Z",
+      "updatedAt": "2025-07-29T20:56:11.852Z",
+      "id": "J6QNO6qDuMb8V4Jm",
+      "name": "TCC"
+    }
+  ]
+}

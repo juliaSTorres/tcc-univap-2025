@@ -1,0 +1,165 @@
+{
+  "name": "Cadastrar_Pedido VIDEO",
+  "nodes": [
+    {
+      "parameters": {
+        "inputSource": "jsonExample",
+        "jsonExample": "{\n  \"nome\": \"\",\n  \"numero_cliente\": \"\",\n  \"email_cliente\": \"\",\n  \"ministerio\": \"\",\n  \"tipo_pedido\": \"video\",\n  \"titulo_video\": \"\",\n  \"tempo_duracao_video\": \"\",\n  \"onde_passara_video\": \"\",\n  \"data_entrega_video\": \"\",\n  \"referencia_video\": \"\",\n  \"publico_alvo_video\": \"\",\n  \"fonte_imagens\": \"\",\n  \"roteiro_video\": \"\"\n  \n}"
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "87f313b4-fd3d-45f6-bc58-3dae8b0e5482",
+      "name": "When Executed by Another Workflow"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "INSERT INTO solicitacoes_video (\n    cliente_id,\n    ministerio,\n    status,\n    titulo_video,\n    tempo_duracao_video,\n    onde_passara_video,\n    data_entrega_video,\n    referencia_video,\n    publico_alvo_video,\n    fonte_imagens,\n    roteiro_video\n) VALUES (\n    {{ $json.id }},\n    '{{ $('dados completos').item.json.ministerio }}',\n    'pendente',\n    '{{ $('dados completos').item.json.detalhes_solicitacao[0].titulo_video }}',\n    '{{ $('dados completos').item.json.detalhes_solicitacao[0].tempo_duracao_video }}',\n    '{{ $('dados completos').item.json.detalhes_solicitacao[0].onde_passara_video }}',\n    '{{ $('dados completos').item.json.detalhes_solicitacao[0].data_entrega_video }}',\n    '{{ $('dados completos').item.json.detalhes_solicitacao[0].referencia_video }}',\n    '{{ $('dados completos').item.json.detalhes_solicitacao[0].publico_alvo_video }}',\n    '{{ $('dados completos').item.json.detalhes_solicitacao[0].fonte_imagens }}',\n    '{{ $('dados completos').item.json.detalhes_solicitacao[0].roteiro_video }}'\n);",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.mySql",
+      "typeVersion": 2.4,
+      "position": [
+        928,
+        0
+      ],
+      "id": "5fee6e5c-f036-4f99-bf0e-28fabd5472a8",
+      "name": "Execute a SQL query",
+      "credentials": {
+        "mySql": {
+          "id": "eHBb7SGQq9KSA7SC",
+          "name": "TCC ATUALIZADO"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT id\nFROM clientes\nWHERE numero_cliente = {{ $json.numero_cliente }}",
+        "options": {
+          "detailedOutput": false
+        }
+      },
+      "type": "n8n-nodes-base.mySql",
+      "typeVersion": 2.4,
+      "position": [
+        704,
+        0
+      ],
+      "id": "b1538032-2a91-4afa-b915-f0e1c571f72c",
+      "name": "Execute a SQL query1",
+      "alwaysOutputData": true,
+      "credentials": {
+        "mySql": {
+          "id": "eHBb7SGQq9KSA7SC",
+          "name": "TCC ATUALIZADO"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "3191c560-791b-497c-8cf6-3e1f95b9c29f",
+              "name": "nome",
+              "value": "={{ $json.nome }}",
+              "type": "string"
+            },
+            {
+              "id": "73cbb2f8-66a7-44c2-9c88-7b1207688a1f",
+              "name": "numero_cliente",
+              "value": "={{ $json.numero_cliente }}",
+              "type": "string"
+            },
+            {
+              "id": "cc407cbb-733d-421a-8312-ec8704f2cf8d",
+              "name": "email_cliente",
+              "value": "={{ $json.email_cliente }}",
+              "type": "string"
+            },
+            {
+              "id": "efb308b8-3b64-432d-8d16-486d304fe35e",
+              "name": "ministerio",
+              "value": "={{ $json.ministerio }}",
+              "type": "string"
+            },
+            {
+              "id": "5c0d3627-9bec-4fcc-87eb-6cf7bd1b51c4",
+              "name": "detalhes_solicitacao",
+              "value": "={{ [{\n    \"titulo_video\": $json.titulo_video,\n    \"tempo_duracao_video\": $json.tempo_duracao_video,\n    \"data_entrega_video\": $json.data_entrega_video,\n    \"referencia_video\": $json.referencia_video,\n    \"onde_passara_video\": $json.onde_passara_video,\n    \"publico_alvo_video\": $json.publico_alvo_video,\n    \"fonte_imagens\": $json.fonte_imagens,\n    \"roteiro_video\": $json.roteiro_video\n}] }}",
+              "type": "array"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        352,
+        0
+      ],
+      "id": "148cb0fd-532c-476c-956f-e625b3e754ea",
+      "name": "dados completos"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "dados completos",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Execute a SQL query1": {
+      "main": [
+        [
+          {
+            "node": "Execute a SQL query",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "dados completos": {
+      "main": [
+        [
+          {
+            "node": "Execute a SQL query1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "ac628b8e-759b-49a8-8cfa-a11a0352643a",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "6b305a80a5187e2b6854af9a2913f91761217b913e9306fbccc703124236b512"
+  },
+  "id": "tfan4l8bk8tZYpcS",
+  "tags": [
+    {
+      "createdAt": "2025-07-29T20:56:11.852Z",
+      "updatedAt": "2025-07-29T20:56:11.852Z",
+      "id": "J6QNO6qDuMb8V4Jm",
+      "name": "TCC"
+    }
+  ]
+}
