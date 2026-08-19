@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Histórico de Solicitações</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"
+        rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        :root {
+            --color-bg-primary: #f8fafc;
+            --color-sidebar-start: #22c55e;
+            --color-sidebar-end: #16bd53;
+            --color-green-action: #22c55e;
+            --color-green-dark: #16a34a;
+            --color-red-danger: #ef4444;
+            --color-blue-link: #3b82f6;
+            --color-text-dark: #1f2937;
+            --color-text-medium: #4b5563;
+            --color-border: #d1d5db;
+            --color-card-bg: #ffffff;
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--color-bg-primary);
+            color: var(--color-text-dark);
+        }
+
+        #sidebar {
+            background: linear-gradient(to bottom, var(--color-sidebar-start), var(--color-sidebar-end));
+            transition: all 0.5s ease-in-out;
+            box-shadow: var(--shadow-lg);
+            border-right: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        .icon-only {
+            display: flex;
+            align-items: center;
+            height: 60px;
+            font-size: 24px;
+            color: var(--color-text-dark);
+            transition: background-color 0.3s ease, color 0.3s ease;
+            white-space: nowrap;
+            overflow: hidden;
+            padding-left: 1.25rem;
+            padding-right: 1.25rem;
+            box-sizing: border-box;
+            justify-content: flex-start;
+        }
+
+        #sidebar button:hover {
+            background-color: rgba(0, 0, 0, 0.15);
+            color: white;
+        }
+
+        #sidebar button.active {
+            background-color: rgba(0, 0, 0, 0.2);
+            color: white;
+            font-weight: 600;
+        }
+
+        .sidebar-text {
+            margin-left: 15px;
+            font-weight: 600;
+            opacity: 0;
+            display: inline-block;
+            width: 0;
+            overflow: hidden;
+            transition: opacity 0.3s ease 0.2s, width 0.3s ease 0.2s;
+        }
+
+        .sidebar-text.active-text {
+            opacity: 1;
+            width: auto;
+        }
+
+        #main-content {
+            padding: 2.5rem;
+            transition: margin-left 0.5s ease-in-out;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 900;
+            color: var(--color-text-dark);
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .card {
+            background-color: var(--color-card-bg);
+            border-radius: 0.75rem;
+            box-shadow: var(--shadow-md);
+            padding: 1.5rem;
+            border: 1px solid var(--color-border);
+        }
+
+        .btn-link {
+            color: var(--color-blue-link);
+            text-decoration: underline;
+            transition: color 0.2s ease;
+        }
+
+        .btn-link:hover {
+            color: #2563eb;
+        }
+
+        .solicitacao-card {
+            background-color: var(--color-card-bg);
+            padding: 1.25rem;
+            border-radius: 0.75rem;
+            box-shadow: var(--shadow-md);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            border: 1px solid var(--color-border);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .solicitacao-card:hover {
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background-color: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(8px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 50;
+            overflow-y: auto;
+            padding: 1.5rem;
+        }
+
+        .modal-content {
+            background-color: var(--color-card-bg);
+            padding: 2.5rem;
+            border-radius: 1rem;
+            box-shadow: var(--shadow-lg);
+            width: 100%;
+            max-width: 48rem;
+            position: relative;
+            max-height: calc(100vh - 3rem);
+            overflow-y: auto;
+        }
+
+        .modal-content h2 {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--color-text-dark);
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-close-btn {
+            position: absolute;
+            top: 1rem;
+            right: 1.25rem;
+            font-size: 2rem;
+            color: var(--color-text-medium);
+            background: none;
+            border: none;
+            cursor: pointer;
+            transition: color 0.2s ease;
+        }
+
+        .modal-close-btn:hover {
+            color: var(--color-red-danger);
+        }
+
+        .break-all-words {
+            word-break: break-word;
+            overflow-wrap: break-word;
+        }
+
+        .status-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-weight: 600;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            color: white;
+        }
+
+        .status-aprovado {
+            background-color: var(--color-green-dark);
+        }
+
+        .status-recusado {
+            background-color: var(--color-red-danger);
+        }
+
+        /* NOVOS ESTILOS ADICIONADOS */
+        .status-aguardando {
+            background-color: #f59e0b;
+            /* Cor Laranja/Âmbar */
+        }
+
+        .status-finalizado {
+            background-color: #6366f1;
+            /* Cor Roxo/Índigo */
+        }
+
+        .filter-checkbox-group {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .filter-checkbox-item {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            user-select: none;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            border: 1px solid var(--color-border);
+            background-color: var(--color-card-bg);
+            transition: background-color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .filter-checkbox-item input {
+            margin-right: 0.5rem;
+        }
+
+        .filter-checkbox-item:hover {
+            background-color: #f0f4f8;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn-icon-danger {
+            background-color: var(--color-red-danger);
+            color: white;
+            padding: 0.6rem 0.8rem;
+            border-radius: 0.5rem;
+            font-size: 1rem;
+            transition: background-color 0.2s ease, transform 0.2s ease;
+        }
+
+        .btn-icon-danger:hover {
+            background-color: #dc2626;
+            transform: scale(1.1);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="flex">
+        <div id="sidebar" class="h-screen w-[60px] fixed overflow-hidden z-40 rounded-r-xl">
+            <button class="w-full p-5 text-left icon-only" title="Solicitações"
+                onclick="location.href='../frontend.html'">📋 <span
+                    class="sidebar-text hidden">Solicitações</span></button>
+            <button class="w-full p-5 text-left icon-only" title="Dashboard"
+                onclick="location.href='./dashboard.html'">📊 <span
+                    class="sidebar-text hidden">Dashboard</span></button>
+            <button class="w-full p-5 text-left icon-only" title="Clientes" onclick="location.href='./clientes.html'">👥
+                <span class="sidebar-text hidden">Clientes</span></button>
+            <button class="w-full p-5 text-left icon-only" title="Configurar Trello"
+                onclick="location.href='./trello_config.html'">⚙️ <span class="sidebar-text hidden">Configurar
+                    Trello</span></button>
+            <button class="w-full p-5 text-left icon-only active" title="Histórico" onclick="location.reload();">🕒
+                <span class="sidebar-text hidden">Histórico</span></button>
+        </div>
+
+        <div id="main-content" class="ml-[60px] w-full">
+            <div class="max-w-4xl mx-auto">
+
+                <div class="mb-8 pt-6">
+                    <div class="flex items-center gap-3">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-9 w-9 text-gray-600" fill="none"
+                            viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        <h1 class="text-4xl md:text-5xl mb-0">Histórico</h1>
+                    </div>
+                    <p class="mt-1 text-lg text-gray-500">
+                        Consulte as solicitações que já foram finalizadas.
+                    </p>
+                </div>
+
+                <div class="card p-4 mb-8">
+                    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                        <span class="font-semibold text-gray-700">Filtrar por status:</span>
+                        <div class="filter-checkbox-group">
+                            <label class="filter-checkbox-item">
+                                <input type="checkbox" id="filtroTodos" value="todos" checked
+                                    onchange="handleFilterChange(this)"> Todos
+                            </label>
+                            <label class="filter-checkbox-item">
+                                <input type="checkbox" id="filtroAprovados" value="Aprovado"
+                                    onchange="handleFilterChange(this)"> Aprovados
+                            </label>
+                            <label class="filter-checkbox-item">
+                                <input type="checkbox" id="filtroRecusados" value="Recusado"
+                                    onchange="handleFilterChange(this)"> Recusados
+                            </label>
+                            <label class="filter-checkbox-item">
+                                <input type="checkbox" id="filtroAguardando" value="aguardando aprovação"
+                                    onchange="handleFilterChange(this)"> Aguardando
+                            </label>
+                            <label class="filter-checkbox-item">
+                                <input type="checkbox" id="filtroFinalizados" value="Finalizado"
+                                    onchange="handleFilterChange(this)"> Finalizados
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div id="listaHistorico">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="cardDetalhes" class="modal-overlay hidden">
+        <div class="modal-content">
+        </div>
+    </div>
+
+    <script src="./js/historico.js"></script>
+</body>
+
+</html>

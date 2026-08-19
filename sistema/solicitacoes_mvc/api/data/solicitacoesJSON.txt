@@ -1,0 +1,51 @@
+ENDPONT
+http://localhost:8080/solicitacoes_mvc/api/solicitacoes
+VIDEO
+
+{
+  "nome": "Maria Souza",
+  "numero_cliente": "12996415762",
+  "email_cliente": "maria.souza@example.com",
+  "ministerio": "Fotografia",
+  "tipo_pedido": "video",
+  "detalhes_solicitacao": {
+    "titulo_video": "Chamada para servir na fotografia",
+    "tempo_duracao_video": "20 segundos",
+    "onde_passara_video": "Instagram Reels, Stories e abertura do culto presencial.",
+    "data_entrega_video": "2025-11-15T12:00",
+    "referencia_video": "https://www.youtube.com/watch?v=exemplo_de_inspiracao",
+    "publico_alvo_video": "Comunidade da igreja e visitantes em potencial, todas as idades.",
+    "fonte_imagens": "Acervo da igreja e algumas captações de entrevistas com membros (a combinar).",
+    "roteiro_video": "Inicio de video vai ser um video bem animado"
+  }
+}
+
+DESING
+
+{
+  "nome": "João da Silva",
+  "numero_cliente": "12345",
+  "email_cliente": "joao.silva@example.com",
+  "ministerio": "Comunicação",
+  "tipo_pedido": "design",
+  "detalhes_solicitacao": {
+    "texto_fundamental": "Banner para o evento de Páscoa: 'A Esperança Renasce'.",
+    "data_evento": "2026-03-28T19:00",
+    "data_entrega_arte": "2026-03-20T10:00",
+    "uso_e_objetivo_arte": "Divulgação nas redes sociais (Instagram, Facebook) e telão da igreja. Objetivo: atrair participantes e divulgar a mensagem central do evento.",
+    "publico_alcancado": "Membros da igreja e comunidade local, focando em famílias e jovens adultos.",
+    "imagem_referencia": "/solicitacoes_mvc/public/uploads/6854682949b1e_WhatsApp Image 2025-05-15 at 16.50.52.jpeg",
+    "formatos_entrega": [
+      "PNG",
+      "JPG para web",
+      "PDF (para impressão)"
+    ],
+    "arquivos_necessarios": [
+      ""
+    ],
+    "email_aprovacao_orcamento": "aprovador.design@ministerio.com",
+    "link_qr_code": "https://linktr.ee/pascoa_2026",
+    "observacoes_complementares": "Preferência por cores claras e elementos que transmitam paz e renovação. Evitar tons escuros. Usar a fonte 'Open Sans' para títulos."
+  }
+}
+

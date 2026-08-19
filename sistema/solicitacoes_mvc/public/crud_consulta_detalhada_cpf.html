@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Consulta Detalhada de CPF - Sistema Crescer</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/loader.css">
+    <script src="js/loader.js"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 1rem;
+            background-color: #ffffff;
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .section-card {
+            background-color: #f9fafb;
+            border: 1px solid #e5e7eb;
+            border-radius: 0.5rem;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .section-header {
+            color: #1f2937;
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            border-bottom: 2px solid #e5e7eb;
+            padding-bottom: 0.5rem;
+        }
+
+        .data-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 1rem;
+        }
+
+        .data-item {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .data-label {
+            font-size: 0.875rem;
+            color: #6b7280;
+            font-weight: 600;
+            text-transform: uppercase;
+            margin-bottom: 0.25rem;
+        }
+
+        .data-value {
+            font-size: 1rem;
+            color: #1f2937;
+        }
+
+        .results-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
+
+        .results-table th,
+        .results-table td {
+            text-align: left;
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .results-table th {
+            background-color: #f3f4f6;
+            font-size: 0.875rem;
+            color: #4b5563;
+        }
+
+        #global-loader {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.5);
+            align-items: center;
+            justify-content: center;
+        }
+
+        .spinner {
+            border: 8px solid rgba(255, 255, 255, 0.1);
+            border-left: 8px solid #ffffff;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="bg-gray-800 p-4 shadow-md">
+        <div class="container mx-auto flex justify-between items-center max-w-full px-4">
+            <a href="#" class="text-white text-2xl font-bold">Sistema Crescer</a>
+            <div>
+                <a href="crud_alunos.html"
+                    class="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-base font-medium">Alunos</a>
+                <a href="crud_turmas.html"
+                    class="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md">Turmas</a>
+                <a href="crud_professores.html"
+                    class="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md">Professores</a>
+                <a href="crud_disciplinas.html"
+                    class="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md">Disciplinas</a>
+                <a href="crud_mensalidades.html"
+                    class="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md">Mensalidades</a>
+                <a href="gerenciar_contratos.html"
+                    class="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md">Contratos</a>
+                <a href="crud_consultar_cpf.html"
+                    class="bg-gray-900 text-white px-3 py-2 rounded-md text-base font-medium">Consulta CPF</a>
+                <a id="nav-gerenciar-usuarios" href="gerenciar_usuarios.html"
+                    class="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md">Gerenciar Usuários</a>
+
+                <button onclick="logout()"
+                    class="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md">Sair</button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <h1 class="text-3xl font-bold text-center text-gray-800 mb-6">Relatório Detalhado de CPF</h1>
+        <div id="message-area" class="message hidden"></div>
+
+        <div id="report-details" class="hidden">
+
+            <div class="section-card">
+                <h2 class="section-header">Informações Pessoais</h2>
+                <div class="data-grid">
+                    <div class="data-item">
+                        <span class="data-label">Nome</span>
+                        <span id="nome-value" class="data-value"></span>
+                    </div>
+                    <div class="data-item">
+                        <span class="data-label">CPF</span>
+                        <span id="cpf-value" class="data-value"></span>
+                    </div>
+                    <div class="data-item">
+                        <span class="data-label">Nome da Mãe</span>
+                        <span id="nome-mae-value" class="data-value"></span>
+                    </div>
+                    <div class="data-item">
+                        <span class="data-label">Data de Nascimento</span>
+                        <span id="data-nascimento-value" class="data-value"></span>
+                    </div>
+                    <div class="data-item">
+                        <span class="data-label">Gênero</span>
+                        <span id="genero-value" class="data-value"></span>
+                    </div>
+                    <div class="data-item">
+                        <span class="data-label">Estado Civil</span>
+                        <span id="estado-civil-value" class="data-value"></span>
+                    </div>
+                    <div class="data-item">
+                        <span class="data-label">Ocupação</span>
+                        <span id="ocupacao-value" class="data-value"></span>
+                    </div>
+                    <div class="data-item">
+                        <span class="data-label">Escolaridade</span>
+                        <span id="escolaridade-value" class="data-value"></span>
+                    </div>
+                    <div class="data-item">
+                        <span class="data-label">Dependentes</span>
+                        <span id="dependentes-value" class="data-value"></span>
+                    </div>
+                    <div class="data-item">
+                        <span class="data-label">Status do CPF</span>
+                        <span id="status-cpf-value" class="data-value"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section-card">
+                <h2 class="section-header">Endereços</h2>
+                <div id="enderecos-list" class="space-y-4"></div>
+            </div>
+
+            <div class="section-card">
+                <h2 class="section-header">Telefones</h2>
+                <div id="telefones-list" class="space-y-4"></div>
+            </div>
+
+            <div class="section-card">
+                <h2 class="section-header">Pendências Financeiras</h2>
+                <div id="pendencias-list" class="space-y-4"></div>
+            </div>
+
+            <div class="section-card">
+                <h2 class="section-header">Consultas Recentes</h2>
+                <div id="consultas-list" class="space-y-4"></div>
+            </div>
+
+            <div class="section-card">
+                <h2 class="section-header">Participação Societária</h2>
+                <div id="societaria-list" class="space-y-4"></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="global-loader" class="loader-overlay">
+        <div class="spinner"></div>
+    </div>
+
+    <script>
+        const API_LOGIN_URL = 'login.html';
+        const API_BASE_URL = 'http://localhost/Sistema/api';
+
+        function logout() {
+            localStorage.clear();
+            window.location.href = API_LOGIN_URL;
+        }
+
+        function displayMessage(message, type, area = document.getElementById('message-area')) {
+            area.textContent = message;
+            area.className = `message ${type}`;
+            area.classList.remove('hidden');
+            setTimeout(() => area.classList.add('hidden'), 5000);
+        }
+
+        function getQueryParams() {
+            const params = {};
+            new URLSearchParams(window.location.search).forEach((value, key) => {
+                params[key] = value;
+            });
+            return params;
+        }
+
+        function formatDate(dateString) {
+            if (!dateString) return 'N/A';
+            const [year, month, day] = dateString.split('-');
+            return `${day}/${month}/${year}`;
+        }
+
+        async function fetchDetailedReport(cpf) {
+            showLoader();
+            try {
+                const token = localStorage.getItem('jwt_token');
+                const response = await fetch(`${API_BASE_URL}/inadimplencia/detalhes?cpf=${cpf}`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                if (!response.ok) {
+                    const errorBody = await response.json();
+                    throw new Error(errorBody.message || 'Erro ao buscar o relatório detalhado.');
+                }
+
+                const data = await response.json();
+                renderDetailedReport(data);
+
+            } catch (error) {
+                console.error("Erro ao carregar o relatório detalhado:", error);
+                displayMessage(`Erro ao carregar o relatório: ${error.message}`, 'error');
+            } finally {
+                hideLoader();
+            }
+        }
+
+        function renderDetailedReport(data) {
+            const reportDetails = document.getElementById('report-details');
+            if (!data || !data.reports || data.reports.length === 0) {
+                displayMessage('Nenhum relatório detalhado encontrado para este CPF.', 'error');
+                reportDetails.classList.add('hidden');
+                return;
+            }
+
+            const report = data.reports[0];
+            const reg = report.registration;
+            const neg = report.negativeData;
+            const facts = report.facts;
+            const partner = report.partner;
+
+            // Seção de Informações Pessoais
+            document.getElementById('nome-value').textContent = reg.consumerName || 'N/A';
+            document.getElementById('cpf-value').textContent = reg.documentNumber ? reg.documentNumber.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4') : 'N/A';
+            document.getElementById('nome-mae-value').textContent = reg.motherName || 'N/A';
+            document.getElementById('data-nascimento-value').textContent = formatDate(reg.birthDate);
+            document.getElementById('genero-value').textContent = reg.consumerGenderDescription || 'N/A';
+            document.getElementById('estado-civil-value').textContent = reg.maritalStatusDescription || 'N/A';
+            document.getElementById('ocupacao-value').textContent = reg.jobDescription || 'N/A';
+            document.getElementById('escolaridade-value').textContent = reg.educationLevelDescription || 'N/A';
+            document.getElementById('dependentes-value').textContent = reg.dependentsNumber || 'N/A';
+            document.getElementById('status-cpf-value').textContent = reg.statusRegistration || 'N/A';
+
+            // Seção de Endereços
+            const enderecosList = document.getElementById('enderecos-list');
+            enderecosList.innerHTML = '';
+            if (reg.addresses && reg.addresses.length > 0) {
+                reg.addresses.forEach(addr => {
+                    const div = document.createElement('div');
+                    div.className = 'bg-white p-4 rounded-md shadow-sm';
+                    div.innerHTML = `
+                        <p class="font-medium text-gray-700">${addr.addressLine}, ${addr.addressNumber || ''} - ${addr.district || ''}</p>
+                        <p class="text-sm text-gray-500">${addr.city || ''} - ${addr.state || ''}, CEP: ${addr.zipCode || 'N/A'}</p>
+                        <p class="text-xs text-gray-400">Tipo: ${addr.addressTypeDescription || 'N/A'} | Atualizado em: ${formatDate(addr.updateDate)}</p>
+                    `;
+                    enderecosList.appendChild(div);
+                });
+            } else {
+                enderecosList.innerHTML = '<p class="text-gray-500">Nenhum endereço encontrado.</p>';
+            }
+
+            // Seção de Telefones
+            const telefonesList = document.getElementById('telefones-list');
+            telefonesList.innerHTML = '';
+            if (reg.phones && reg.phones.length > 0) {
+                reg.phones.forEach(phone => {
+                    const div = document.createElement('div');
+                    div.className = 'bg-white p-4 rounded-md shadow-sm';
+                    div.innerHTML = `
+                        <p class="font-medium text-gray-700">(+${phone.regionCode}) ${phone.areaCode} ${phone.phoneNumber}</p>
+                        <p class="text-sm text-gray-500">Tipo: ${phone.phoneType || 'N/A'} | Atualizado em: ${formatDate(phone.updateDate)}</p>
+                    `;
+                    telefonesList.appendChild(div);
+                });
+            } else {
+                telefonesList.innerHTML = '<p class="text-gray-500">Nenhum telefone encontrado.</p>';
+            }
+
+            // Seção de Pendências Financeiras
+            const pendenciasList = document.getElementById('pendencias-list');
+            pendenciasList.innerHTML = '';
+            const allPendencias = [
+                ...(neg.pefin?.pefinResponse || []),
+                ...(neg.refin?.refinResponse || []),
+                ...(neg.notary?.notaryResponse || [])
+            ];
+            if (allPendencias.length > 0) {
+                const table = document.createElement('table');
+                table.className = 'results-table';
+                table.innerHTML = `
+                    <thead>
+                        <tr>
+                            <th>Credor</th>
+                            <th>Valor (R$)</th>
+                            <th>Data Ocorrência</th>
+                            <th>Natureza</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                `;
+                const tbody = table.querySelector('tbody');
+                allPendencias.forEach(item => {
+                    const row = document.createElement('tr');
+                    const formattedAmount = (item.amount || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+                    row.innerHTML = `
+                        <td>${item.creditorName || item.credor || 'N/A'}</td>
+                        <td>${formattedAmount}</td>
+                        <td>${formatDate(item.occurrenceDate)}</td>
+                        <td>${item.legalNature || 'N/A'}</td>
+                    `;
+                    tbody.appendChild(row);
+                });
+                pendenciasList.appendChild(table);
+            } else {
+                pendenciasList.innerHTML = '<p class="text-gray-500">Nenhuma pendência financeira encontrada.</p>';
+            }
+
+            // Seção de Consultas Recentes
+            const consultasList = document.getElementById('consultas-list');
+            consultasList.innerHTML = '';
+            if (facts.inquiry?.inquiryResponse && facts.inquiry.inquiryResponse.length > 0) {
+                const table = document.createElement('table');
+                table.className = 'results-table';
+                table.innerHTML = `
+                    <thead>
+                        <tr>
+                            <th>Data da Consulta</th>
+                            <th>Segmento</th>
+                            <th>Quantidade de Dias</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                `;
+                const tbody = table.querySelector('tbody');
+                facts.inquiry.inquiryResponse.forEach(item => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${formatDate(item.occurrenceDate)}</td>
+                        <td>${item.segmentDescription || 'N/A'}</td>
+                        <td>${item.daysQuantity || 'N/A'}</td>
+                    `;
+                    tbody.appendChild(row);
+                });
+                consultasList.appendChild(table);
+            } else {
+                consultasList.innerHTML = '<p class="text-gray-500">Nenhuma consulta recente encontrada.</p>';
+            }
+
+            // Seção de Participação Societária
+            const societariaList = document.getElementById('societaria-list');
+            societariaList.innerHTML = '';
+            if (partner.partnershipResponse && partner.partnershipResponse.length > 0) {
+                const table = document.createElement('table');
+                table.className = 'results-table';
+                table.innerHTML = `
+                    <thead>
+                        <tr>
+                            <th>CNPJ</th>
+                            <th>Nome da Empresa</th>
+                            <th>% Participação</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                `;
+                const tbody = table.querySelector('tbody');
+                partner.partnershipResponse.forEach(item => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${item.businessDocument || 'N/A'}</td>
+                        <td>${item.companyName || 'N/A'}</td>
+                        <td>${item.participationPercentage !== undefined ? `${item.participationPercentage}%` : 'N/A'}</td>
+                        <td>${item.companyStatus || 'N/A'}</td>
+                    `;
+                    tbody.appendChild(row);
+                });
+                societariaList.appendChild(table);
+            } else {
+                societariaList.innerHTML = '<p class="text-gray-500">Nenhuma participação societária encontrada.</p>';
+            }
+
+            reportDetails.classList.remove('hidden');
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const token = localStorage.getItem('jwt_token');
+            const role = localStorage.getItem('user_role');
+            if (!token || role !== 'admin') {
+                window.location.href = API_LOGIN_URL;
+                return;
+            }
+
+            const params = getQueryParams();
+            const cpf = params.cpf;
+
+            if (cpf) {
+                fetchDetailedReport(cpf);
+            } else {
+                displayMessage('CPF não fornecido. Por favor, volte à página anterior e tente novamente.', 'error');
+            }
+        });
+    </script>
+</body>
+
+</html>

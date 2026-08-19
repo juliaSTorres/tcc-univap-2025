@@ -1,0 +1,752 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sistema de Solicitações</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"
+        rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Cores base atualizadas e ajustadas para serem mais vívidas */
+        :root {
+            --color-bg-primary: #f8fafc;
+            --color-sidebar-start: #22c55e;
+            --color-sidebar-end: #16bd53;
+            --color-green-action: #22c55e;
+            --color-green-dark: #16a34a;
+            --color-red-danger: #ef4444;
+            --color-blue-link: #3b82f6;
+            --color-text-dark: #1f2937;
+            --color-text-medium: #4b5563;
+            --color-border: #d1d5db;
+            --color-card-bg: #ffffff;
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--color-bg-primary);
+            color: var(--color-text-dark);
+        }
+
+        /* Sidebar - REVISADA */
+        #sidebar {
+            background: linear-gradient(to bottom, var(--color-sidebar-start), var(--color-sidebar-end));
+            transition: all 0.5s ease-in-out;
+            box-shadow: var(--shadow-lg);
+            border-right: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        .icon-only {
+            display: flex;
+            align-items: center;
+            height: 60px;
+            font-size: 24px;
+            color: var(--color-text-dark);
+            transition: background-color 0.3s ease, color 0.3s ease;
+            white-space: nowrap;
+            overflow: hidden;
+            padding-left: 1.25rem;
+            padding-right: 1.25rem;
+            box-sizing: border-box;
+            justify-content: flex-start;
+        }
+
+        #sidebar button:hover {
+            background-color: rgba(0, 0, 0, 0.15);
+            color: white;
+        }
+
+        #sidebar button.active {
+            background-color: rgba(0, 0, 0, 0.2);
+            color: white;
+            font-weight: 600;
+        }
+
+        .sidebar-text {
+            margin-left: 15px;
+            font-weight: 600;
+            opacity: 0;
+            display: inline-block;
+            width: 0;
+            overflow: hidden;
+            transition: opacity 0.3s ease 0.2s, width 0.3s ease 0.2s;
+        }
+
+        .sidebar-text.active-text {
+            opacity: 1;
+            width: auto;
+        }
+
+        /* Conteúdo Principal */
+        #main-content {
+            padding: 2.5rem;
+            transition: margin-left 0.5s ease-in-out;
+        }
+
+        /* Ajuste para a fonte "SOLICITAÇÕES" */
+        h1 {
+            font-size: 2.5rem;
+            /* Ajustado para melhor responsividade */
+            font-weight: 900;
+            color: var(--color-text-dark);
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Botões */
+        .btn-primary {
+            background-color: var(--color-green-action);
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.75rem;
+            font-weight: 600;
+            transition: background-color 0.2s ease, transform 0.1s ease;
+            white-space: nowrap;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--color-green-dark);
+            transform: translateY(-1px);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn-icon-success {
+            background-color: var(--color-green-action);
+            color: white;
+            padding: 0.65rem 0.9rem;
+            border-radius: 0.5rem;
+            font-size: 1.1rem;
+            transition: background-color 0.2s ease, transform 0.2s ease;
+        }
+
+        .btn-icon-success:hover {
+            background-color: var(--color-green-dark);
+            transform: scale(1.1);
+        }
+
+        .btn-icon-danger {
+            background-color: var(--color-red-danger);
+            color: white;
+            padding: 0.65rem 0.9rem;
+            border-radius: 0.5rem;
+            font-size: 1.1rem;
+            transition: background-color 0.2s ease, transform 0.2s ease;
+        }
+
+        .btn-icon-danger:hover {
+            background-color: #dc2626;
+            transform: scale(1.1);
+        }
+
+        .btn-link {
+            color: var(--color-blue-link);
+            text-decoration: underline;
+            transition: color 0.2s ease;
+        }
+
+        .btn-link:hover {
+            color: #2563eb;
+        }
+
+        /* Cards de Solicitação na Lista */
+        .solicitacao-card {
+            background-color: var(--color-card-bg);
+            padding: 1.25rem;
+            border-radius: 0.75rem;
+            box-shadow: var(--shadow-md);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            border: 1px solid var(--color-border);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .solicitacao-card:hover {
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .solicitacao-card strong {
+            font-weight: 600;
+        }
+
+        .card {
+            background-color: var(--color-card-bg);
+            border-radius: 0.75rem;
+            box-shadow: var(--shadow-md);
+            padding: 1.5rem;
+            border: 1px solid var(--color-border);
+        }
+
+        /* Modals (Formulário, Detalhes, Retorno) */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background-color: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(8px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 50;
+            overflow-y: auto;
+            padding: 1.5rem;
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        .modal-content {
+            background-color: var(--color-card-bg);
+            padding: 2.5rem;
+            border-radius: 1rem;
+            box-shadow: var(--shadow-lg);
+            width: 100%;
+            max-width: 48rem;
+            position: relative;
+            max-height: calc(100vh - 3rem);
+            overflow-y: auto;
+            animation: slideInUp 0.3s ease-out;
+        }
+
+        .modal-content h2 {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--color-text-dark);
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-close-btn {
+            position: absolute;
+            top: 1rem;
+            right: 1.25rem;
+            font-size: 2rem;
+            color: var(--color-text-medium);
+            background: none;
+            border: none;
+            cursor: pointer;
+            transition: color 0.2s ease;
+        }
+
+        .modal-close-btn:hover {
+            color: var(--color-red-danger);
+        }
+
+        /* Inputs e Textareas */
+        .form-input {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 1px solid var(--color-border);
+            border-radius: 0.5rem;
+            background-color: #f9fafb;
+            color: var(--color-text-dark);
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .form-input::placeholder {
+            color: #9ca3af;
+        }
+
+        .form-input:focus {
+            border-color: var(--color-blue-link);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.25);
+        }
+
+        .form-label {
+            display: block;
+            color: var(--color-text-medium);
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            font-size: 0.875rem;
+        }
+
+        /* Seção de Detalhes (Design/Vídeo) */
+        .details-section {
+            border: 1px solid var(--color-border);
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            margin-bottom: 1rem;
+            background-color: #fcfcfc;
+            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.05);
+        }
+
+        .details-section h3 {
+            font-weight: 700;
+            font-size: 1.25rem;
+            margin-bottom: 1rem;
+            color: var(--color-text-dark);
+        }
+
+        /* Utilitários para texto longo e erros */
+        .break-all-words {
+            word-break: break-word;
+            overflow-wrap: break-word;
+        }
+
+        .input-error {
+            border-color: var(--color-red-danger) !important;
+        }
+
+        .error-message {
+            color: var(--color-red-danger);
+            font-size: 0.875rem;
+            margin-top: 0.25rem;
+            display: none;
+        }
+
+        .error-message.active {
+            display: block;
+        }
+
+        /* Estilo para o grupo de checkboxes do filtro */
+        .filter-header {
+            color: var(--color-text-medium);
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            font-size: 0.875rem;
+        }
+
+        .filter-checkbox-group {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .filter-checkbox-item {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            user-select: none;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            border: 1px solid var(--color-border);
+            background-color: var(--color-card-bg);
+            transition: background-color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .filter-checkbox-item:hover {
+            background-color: #f0f4f8;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .filter-checkbox-item input[type="checkbox"] {
+            margin-right: 0.5rem;
+        }
+
+        /* Estilos para o campo de pesquisa de cliente e resultados */
+        .search-result-item {
+            padding: 0.75rem 1rem;
+            cursor: pointer;
+            border-bottom: 1px solid var(--color-border);
+            transition: background-color 0.2s ease;
+        }
+
+        .search-result-item:last-child {
+            border-bottom: none;
+        }
+
+        .search-result-item:hover {
+            background-color: #f0f4f8;
+        }
+
+        /* Animações */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideInUp {
+            from {
+                transform: translateY(20px);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .pagination-btn {
+            padding: 0.5rem 1rem;
+            border: 1px solid var(--color-border);
+            border-radius: 0.5rem;
+            cursor: pointer;
+            transition: background-color 0.2s ease, color 0.2s ease;
+            font-weight: 600;
+        }
+
+        .pagination-btn:hover {
+            background-color: #e5e7eb;
+        }
+
+        .pagination-btn.active {
+            background-color: var(--color-green-action);
+            color: white;
+            border-color: var(--color-green-dark);
+        }
+
+        /* === INÍCIO DOS NOVOS ESTILOS === */
+        .status-badge {
+            padding: 0.2rem 0.6rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            white-space: nowrap;
+        }
+
+        .badge-design {
+            background-color: #e0f2fe;
+            /* Azul claro */
+            color: #0284c7;
+            /* Azul escuro */
+            border: 1px solid #7dd3fc;
+        }
+
+        .badge-video {
+            background-color: #f3e8ff;
+            /* Roxo claro */
+            color: #7e22ce;
+            /* Roxo escuro */
+            border: 1px solid #d8b4fe;
+        }
+
+
+        label[for]::after {
+            content: '';
+        }
+
+        /* Adiciona * em labels de campos obrigatórios */
+        input[required]+span::before,
+        textarea[required]+span::before,
+        select[required]+span::before {
+            content: '*';
+            color: red;
+            margin-right: 4px;
+        }
+
+        /* OU mais direto (melhor) */
+        label.required::after {
+            content: ' *';
+            color: red;
+        }
+
+        /* === FIM DOS NOVOS ESTILOS === */
+    </style>
+</head>
+
+<body class="font-inter">
+    <div class="flex">
+        <div id="sidebar" class="h-screen w-[60px] fixed overflow-hidden z-40 rounded-r-xl">
+            <button class="w-full p-5 text-left icon-only active" title="Solicitações" onclick="location.reload();">📋
+                <span class="sidebar-text hidden">Solicitações</span></button>
+            <button class="w-full p-5 text-left icon-only" title="Dashboard"
+                onclick="location.href='public/dashboard.html'">📊 <span
+                    class="sidebar-text hidden">Dashboard</span></button>
+            <button class="w-full p-5 text-left icon-only" title="Clientes"
+                onclick="location.href='public/clientes.html'">👥 <span
+                    class="sidebar-text hidden">Clientes</span></button>
+            <button class="w-full p-5 text-left icon-only" title="Configurar Trello"
+                onclick="location.href='public/trello_config.html'">⚙️ <span class="sidebar-text hidden">Configurar
+                    Trello</span></button>
+            <button class="w-full p-5 text-left icon-only" title="Histórico"
+                onclick="location.href='public/historico.html'">🕒 <span
+                    class="sidebar-text hidden">Histórico</span></button>
+        </div>
+
+        <div id="main-content" class="ml-[60px] w-full">
+            <div class="max-w-4xl mx-auto">
+
+                <div class="flex flex-col md:flex-row md:justify-between md:items-center mb-8 pt-6">
+                    <div>
+                        <div class="flex items-center gap-3">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-9 w-9 text-gray-600" fill="none"
+                                viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                    d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
+                            </svg>
+                            <h1 class="text-4xl md:text-5xl mb-0">Solicitações</h1>
+                        </div>
+                        <p class="mt-1 text-lg text-gray-500">
+                            Crie e acompanhe seus pedidos de Design e Vídeo.
+                        </p>
+                    </div>
+                    <button class="btn-primary mt-4 md:mt-0" onclick="abrirFormulario()">+ Adicionar
+                        Solicitação</button>
+                </div>
+
+                
+                <div class="card mb-8 p-4">
+                    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                        <span class="font-semibold text-gray-700">Filtrar por tipo:</span>
+                        <div class="filter-checkbox-group">
+                            <label class="filter-checkbox-item">
+                                <input type="checkbox" id="filtroTodos" value="todos" checked
+                                    onchange="handleFilterCheckboxChange(this)">
+                                Todos
+                            </label>
+                            <label class="filter-checkbox-item">
+                                <input type="checkbox" id="filtroDesign" value="design"
+                                    onchange="handleFilterCheckboxChange(this)">
+                                Design
+                            </label>
+                            <label class="filter-checkbox-item">
+                                <input type="checkbox" id="filtroVideo" value="video"
+                                    onchange="handleFilterCheckboxChange(this)">
+                                Vídeo
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div id="listaSolicitacoes">
+                </div>
+                <div id="pagination-controls" class="flex justify-center items-center gap-2 mt-8">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="formModal" class="modal-overlay hidden">
+        <div class="modal-content">
+            <button class="modal-close-btn" onclick="fecharFormulario()">&times;</button>
+            <h2>Nova Solicitação</h2>
+
+            <form id="solicitacaoForm" onsubmit="event.preventDefault(); enviarSolicitacao();" novalidate>
+                <!-- Tipo de Pedido -->
+                <div class="mb-4">
+                    <label for="tipo_pedido" class="form-label">Tipo de Pedido:</label>
+                    <select id="tipo_pedido" name="tipo_pedido" onchange="mostrarCamposPorTipo()" class="form-input"
+                        required>
+                        <option value="">Selecione o Tipo de Pedido</option>
+                        <option value="design">Design</option>
+                        <option value="video">Vídeo</option>
+                    </select>
+                    <span id="tipo_pedido-error" class="error-message">Tipo de pedido é obrigatório.</span>
+                </div>
+
+                <!-- Pesquisa de Cliente -->
+                <div class="mb-4 relative">
+                    <label for="clienteSearch" class="form-label">Pesquisar Cliente Existente:</label>
+                    <input type="text" id="clienteSearch" name="clienteSearch"
+                        placeholder="Pesquisar por nome, telefone ou email..." class="form-input" autocomplete="off" />
+                    <input type="hidden" id="selectedClientId" name="selectedClientId">
+                    <div id="searchResults"
+                        class="absolute w-full mt-1 bg-white border border-gray-300 rounded-md shadow-lg max-h-48 overflow-y-auto z-10 hidden">
+                    </div>
+                </div>
+
+                <!-- Nome -->
+                <div class="mb-4">
+                    <label for="nome" class="form-label required">Nome do Solicitante:</label>
+                    <input type="text" id="nome" name="nome" placeholder="Ex: João da Silva" class="form-input"
+                        required />
+                    <span id="nome-error" class="error-message">Nome do solicitante é obrigatório.</span>
+                </div>
+
+                <!-- Telefone -->
+                <div class="mb-4">
+                    <label for="numero_cliente" class="form-label required">Telefone do Cliente:</label>
+                    <input type="text" id="numero_cliente" name="numero_cliente" placeholder="Ex: (XX) XXXXX-XXXX"
+                        class="form-input" required />
+                    <span id="numero_cliente-error" class="error-message">Telefone do cliente é obrigatório.</span>
+                </div>
+
+                <!-- Email -->
+                <div class="mb-4">
+                    <label for="email_cliente" class="form-label required">E-mail do Cliente:</label>
+                    <input type="email" id="email_cliente" name="email_cliente" placeholder="Ex: cliente@email.com"
+                        class="form-input" required />
+                    <span id="email_cliente-error" class="error-message">Email do cliente é obrigatório e deve ser
+                        válido.</span>
+                </div>
+
+                <!-- Ministério -->
+                <div class="mb-4">
+                    <label for="ministerio" class="form-label required">Ministério:</label>
+                    <input type="text" id="ministerio" name="ministerio" placeholder="Ex: Fotografia, Dança"
+                        class="form-input" required />
+                    <span id="ministerio-error" class="error-message">Ministério é obrigatório.</span>
+                </div>
+
+                <!-- Detalhes Design -->
+                <div id="detalhesDesign" class="hidden details-section">
+                    <h3>Detalhes para Pedido de Design</h3>
+
+                    <div class="mb-4">
+                        <label for="texto_fundamental" class="form-label required">Texto Fundamental:</label>
+                        <textarea id="texto_fundamental" name="texto_fundamental"
+                            placeholder="TÍTULOS, DATAS, FRASES ..." class="form-input"></textarea>
+                        <span id="texto_fundamental-error" class="error-message">Texto fundamental é obrigatório para
+                            Design.</span>
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="data_evento_design" class="form-label">Data do Evento (se tiver):</label>
+                        <input type="date" id="data_evento_design" name="data_evento_design" class="form-input" />
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="data_entrega_arte" class="form-label required">Data de Entrega da Arte:</label>
+                        <input type="date" id="data_entrega_arte" name="data_entrega_arte" class="form-input"
+                            required />
+                        <span id="data_entrega_arte-error" class="error-message">Data de entrega da arte é obrigatória
+                            para Design.</span>
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="uso_e_objetivo_arte" class="form-label">Uso e Objetivo da Arte:</label>
+                        <textarea id="uso_e_objetivo_arte" name="uso_e_objetivo_arte"
+                            placeholder="Como essa arte será usada? (Ex: Redes sociais)" class="form-input"></textarea>
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="publico_alcancado" class="form-label">Público Alvo:</label>
+                        <textarea id="publico_alcancado" name="publico_alcancado"
+                            placeholder="Descreva o público que precisa ser alcançado" class="form-input"></textarea>
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="imagem_referencia" class="form-label">Imagem de Referência:</label>
+                        <input type="file" id="imagem_referencia" name="imagem_referencia" class="form-input"
+                            accept="image/*" />
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="formatos_entrega" class="form-label">Formatos de Entrega:</label>
+                        <input type="text" id="formatos_entrega" name="formatos_entrega"
+                            placeholder="Ex: PNG, JPG, PDF..." class="form-input" />
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="arquivos_necessarios" class="form-label">Arquivos Necessários:</label>
+                        <input type="text" id="arquivos_necessarios" name="arquivos_necessarios"
+                            placeholder="Links/nomes de arquivos necessários" class="form-input" />
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="email_aprovacao_orcamento" class="form-label">E-mail para Aprovação de
+                            Orçamento:</label>
+                        <input type="email" id="email_aprovacao_orcamento" name="email_aprovacao_orcamento"
+                            placeholder="E-mail de quem aprova o orçamento" class="form-input" />
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="link_qr_code" class="form-label">Link do QR Code (se houver):</label>
+                        <input type="url" id="link_qr_code" name="link_qr_code"
+                            placeholder="Ex: https://link.qr.code/evento" class="form-input" />
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="observacoes_complementares" class="form-label">Observações Complementares:</label>
+                        <textarea id="observacoes_complementares" name="observacoes_complementares"
+                            placeholder="Observações, informações extras..." class="form-input"></textarea>
+                    </div>
+                </div>
+
+                <!-- Detalhes Vídeo -->
+                <div id="detalhesVideo" class="hidden details-section">
+                    <h3>Detalhes para Pedido de Vídeo</h3>
+
+                    <div class="mb-4">
+                        <label for="titulo_video" class="form-label required">Título do Vídeo:</label>
+                        <input type="text" id="titulo_video" name="titulo_video"
+                            placeholder="Ex: Mensagem de Boas-Vindas" class="form-input" />
+                        <span id="titulo_video-error" class="error-message">Título do vídeo é obrigatório para
+                            Vídeo.</span>
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="tempo_duracao_video" class="form-label required">Duração Estimada:</label>
+                        <input type="text" id="tempo_duracao_video" name="tempo_duracao_video"
+                            placeholder="Ex: 1 minuto e 30 segundos" class="form-input" />
+                            <span id="tempo_duracao_video-error" class="error-message">Duração estimada é obrigatória
+                            para Vídeo.</span>
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="onde_passara_video" class="form-label">Onde o vídeo será exibido:</label>
+                        <textarea id="onde_passara_video" name="onde_passara_video"
+                            placeholder="Ex: Telão do culto, YouTube" class="form-input"></textarea>
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="data_entrega_video" class="form-label required">Data de Entrega do Vídeo:</label>
+                        <input type="date" id="data_entrega_video" name="data_entrega_video" class="form-input"
+                            required />
+                        <span id="data_entrega_video-error" class="error-message">Data de entrega do vídeo é obrigatória
+                            para Vídeo.</span>
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="referencia_video" class="form-label">Link de Referência:</label>
+                        <input type="text" id="referencia_video" name="referencia_video"
+                            placeholder="Ex: https://youtube.com/..." class="form-input" />
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="publico_alvo_video" class="form-label">Público Alvo:</label>
+                        <textarea id="publico_alvo_video" name="publico_alvo_video"
+                            placeholder="Ex: Membros recém-chegados" class="form-input"></textarea>
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="fonte_imagens" class="form-label">Fonte das Imagens:</label>
+                        <input type="text" id="fonte_imagens" name="fonte_imagens" placeholder="Captação, Acervo, etc."
+                            class="form-input" />
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="roteiro_video" class="form-label required">Roteiro do Vídeo:</label>
+                        <textarea id="roteiro_video" name="roteiro_video" placeholder="Descreva o roteiro do vídeo"
+                            class="form-input"></textarea>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-primary mt-4">Enviar Solicitação</button>
+            </form>
+        </div>
+    </div>
+
+
+    <div id="cardDetalhes" class="modal-overlay hidden">
+        <div class="modal-content">
+        </div>
+    </div>
+
+    <div id="cancelModal" class="modal-overlay hidden">
+        <div class="modal-content max-w-lg p-6">
+            <button class="modal-close-btn" onclick="fecharCancelamento()">&times;</button>
+            <h2 class="text-lg font-bold mb-4">Cancelar Solicitação</h2>
+            <p class="mb-4">Tem certeza de que deseja cancelar esta solicitação? Por favor, informe o motivo.</p>
+
+            <form id="cancelForm" onsubmit="event.preventDefault(); confirmarCancelamento();">
+                <div class="mb-4">
+                    <label for="motivoCancelamento" class="form-label">Motivo do Cancelamento:</label>
+                    <textarea id="motivoCancelamento" name="motivoCancelamento" class="form-input" rows="4"
+                        placeholder="Descreva o motivo..." required></textarea>
+                    <span id="motivoCancelamento-error" class="error-message">Motivo do cancelamento é
+                        obrigatório.</span>
+                </div>
+                <div class="flex justify-end gap-3 mt-4">
+                    <button type="button"
+                        class="bg-gray-400 text-white px-4 py-2 rounded-lg transition hover:bg-gray-500"
+                        onclick="fecharCancelamento()">Não</button>
+                    <button type="submit" class="btn-icon-danger px-4 py-2">Sim, Cancelar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="./public/js/main.js"></script>
+</body>
+
+</html>

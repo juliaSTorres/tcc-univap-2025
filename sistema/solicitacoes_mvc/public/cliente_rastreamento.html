@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Acompanhe seu Pedido</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"
+        rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        :root {
+            --color-bg-primary: #f8fafc;
+            --color-green-action: #22c55e;
+            --color-green-dark: #16a34a;
+            --color-yellow-action: #f59e0b;
+            --color-yellow-dark: #d97706;
+            --color-red-danger: #ef4444;
+            --color-blue-link: #3b82f6;
+            --color-text-dark: #1f2937;
+            --color-text-medium: #4b5563;
+            --color-border: #d1d5db;
+            --color-card-bg: #ffffff;
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--color-bg-primary);
+            color: var(--color-text-dark);
+            padding: 1rem;
+        }
+
+        .container {
+            background-color: var(--color-card-bg);
+            padding: 2.5rem;
+            border-radius: 1rem;
+            box-shadow: var(--shadow-lg);
+            width: 100%;
+            max-width: 48rem;
+            margin: 2rem auto;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: var(--color-text-dark);
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+
+        .form-input,
+        .form-textarea {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 1px solid var(--color-border);
+            border-radius: 0.5rem;
+            background-color: #f9fafb;
+            color: var(--color-text-dark);
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .form-input:focus,
+        .form-textarea:focus {
+            border-color: var(--color-blue-link);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.25);
+        }
+
+        .form-label {
+            display: block;
+            color: var(--color-text-medium);
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            font-size: 0.875rem;
+            text-align: left;
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.75rem;
+            font-weight: 600;
+            transition: background-color 0.2s ease, transform 0.1s ease;
+            white-space: nowrap;
+            width: 100%;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-primary {
+            background-color: var(--color-green-action);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--color-green-dark);
+        }
+
+        .btn-danger {
+            background-color: var(--color-red-danger);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background-color: #c02626;
+        }
+
+        .btn-warning {
+            background-color: var(--color-yellow-action);
+            color: white;
+        }
+
+        .btn-warning:hover {
+            background-color: var(--color-yellow-dark);
+        }
+
+        .error-message {
+            color: var(--color-red-danger);
+            font-size: 0.875rem;
+            margin-top: 0.25rem;
+            text-align: left;
+            display: none;
+        }
+
+        .error-message.active {
+            display: block;
+        }
+
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background-color: rgba(0, 0, 0, 0.6);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 50;
+        }
+
+        .modal-content {
+            background-color: white;
+            padding: 2rem;
+            border-radius: 0.75rem;
+            max-width: 32rem;
+            width: 100%;
+            text-align: center;
+        }
+
+        #orderDetails {
+            text-align: left;
+            border-top: 1px solid var(--color-border);
+            margin-top: 2rem;
+            padding-top: 2rem;
+        }
+
+        #orderDetails h2 {
+            font-size: 1.75rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        #orderDetails p {
+            margin-bottom: 0.5rem;
+            color: var(--color-text-medium);
+        }
+
+        #orderDetails strong {
+            color: var(--color-text-dark);
+        }
+
+        .status-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-weight: 600;
+            font-size: 0.875rem;
+        }
+
+        .status-green {
+            background-color: #dcfce7;
+            color: #166534;
+        }
+
+        .status-yellow {
+            background-color: #fef9c3;
+            color: #854d0e;
+        }
+
+        .status-blue {
+            background-color: #dbeafe;
+            color: #1e40af;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div id="trackingSection">
+            <h1>Acompanhe seu Pedido</h1>
+            <form id="trackingForm" onsubmit="event.preventDefault(); trackOrder();">
+                <div class="mb-6">
+                    <label for="trelloCardIdInput" class="form-label">Insira o código do seu pedido:</label>
+                    <input type="text" id="trelloCardIdInput" name="trelloCardId"
+                        placeholder="Ex: 65e311fbe4d6123c52a123bc" class="form-input" required />
+                    <span id="trelloCardIdInput-error" class="error-message"></span>
+                </div>
+                <button type="submit" class="btn btn-primary">Acompanhar Pedido</button>
+            </form>
+        </div>
+
+        <div id="orderDetails" class="hidden">
+            <h2 id="orderTitle"></h2>
+            <p><strong>Solicitante:</strong> <span id="orderSolicitante"></span></p>
+            <p><strong>Tipo:</strong> <span id="orderType"></span></p>
+            <p><strong>Status do Trello:</strong> <span id="orderStatus" class="status-badge"></span></p>
+            <hr class="my-4">
+            <div id="orderSpecificDetails"></div>
+        </div>
+    </div>
+
+    <div id="approvalModal" class="modal-overlay hidden">
+        <div class="modal-content">
+            <h2 class="text-2xl font-bold mb-4">Aprovação Necessária</h2>
+            <p class="mb-6 text-gray-600">Sua solicitação foi finalizada pela nossa equipe. Por favor, revise o material
+                e escolha uma das opções abaixo.</p>
+
+            <div id="initialActions" class="flex gap-4">
+                <button onclick="showDisapprovalForm()" class="btn btn-danger">Reprovar e Pedir Ajuste</button>
+                <button onclick="approveRequest()" class="btn btn-primary">Aprovar Entrega</button>
+            </div>
+
+            <div id="disapprovalForm" class="hidden">
+                <label for="disapprovalReason" class="form-label">Descreva em detalhes os ajustes necessários:</label>
+                <textarea id="disapprovalReason" class="form-textarea" rows="4"
+                    placeholder="Ex: Por favor, alterar a cor do título para azul..."></textarea>
+                <span id="disapprovalReason-error" class="error-message"></span>
+                <div class="flex gap-4 mt-4">
+                    <button onclick="hideDisapprovalForm()"
+                        class="btn bg-gray-300 hover:bg-gray-400 text-gray-800">Voltar</button>
+                    <button onclick="sendDisapproval()" class="btn btn-warning">Enviar para Ajuste</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE_URL = 'http://localhost:80/solicitacoes_mvc/api';
+
+        // ==========================================================
+        // !! CONFIGURE SEUS WEBHOOKS AQUI !!
+        // ==========================================================
+        const APPROVE_WEBHOOK_URL = 'https://sistema-crescer-n8n.vuvd0x.easypanel.host/webhook/approve_solicitacao';
+        const DISAPPROVE_WEBHOOK_URL = 'https://sistema-crescer-n8n.vuvd0x.easypanel.host/webhook/request-ajuste';
+        // ==========================================================
+
+        let currentSolicitacao = null; // Armazena a solicitação atual
+
+        function addError(fieldId, message) {
+            const el = document.getElementById(fieldId);
+            const errorEl = document.getElementById(fieldId + '-error');
+            if (el && errorEl) {
+                el.classList.add('border-red-500');
+                errorEl.innerText = message;
+                errorEl.classList.add('active');
+            }
+        }
+
+        function clearError(fieldId) {
+            const el = document.getElementById(fieldId);
+            const errorEl = document.getElementById(fieldId + '-error');
+            if (el && errorEl) {
+                el.classList.remove('border-red-500');
+                errorEl.classList.remove('active');
+            }
+        }
+
+        async function trackOrder() {
+            clearError('trelloCardIdInput');
+            const trelloCardId = document.getElementById('trelloCardIdInput').value.trim();
+
+            if (!trelloCardId) {
+                addError('trelloCardIdInput', 'O código do pedido é obrigatório.');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/solicitacoes/by_trello_card_id`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ trello_card_id: trelloCardId }),
+                });
+
+                const result = await response.json();
+
+                if (response.ok && result.success && result.solicitacao_data) {
+                    currentSolicitacao = result.solicitacao_data;
+                    displayOrderDetails();
+                } else {
+                    const errorMessage = result.message || 'Pedido não encontrado.';
+                    alert(errorMessage);
+                    addError('trelloCardIdInput', errorMessage);
+                }
+            } catch (error) {
+                console.error('Erro ao rastrear pedido:', error);
+                alert('Erro de conexão. Tente novamente mais tarde.');
+                addError('trelloCardIdInput', 'Erro de conexão com o servidor.');
+            }
+        }
+
+        function displayOrderDetails() {
+            if (!currentSolicitacao) return;
+
+            // Esconde o formulário de busca e mostra os detalhes
+            document.getElementById('trackingSection').classList.add('hidden');
+            document.getElementById('orderDetails').classList.remove('hidden');
+
+            // Preenche os detalhes básicos
+            const d = currentSolicitacao.detalhes_solicitacao;
+            const title = currentSolicitacao.tipo_pedido === 'design' ? d.texto_fundamental : d.titulo_video;
+            document.getElementById('orderTitle').innerText = title || "Solicitação sem Título";
+            document.getElementById('orderSolicitante').innerText = currentSolicitacao.nome;
+            document.getElementById('orderType').innerText = currentSolicitacao.tipo_pedido.charAt(0).toUpperCase() + currentSolicitacao.tipo_pedido.slice(1);
+
+            const statusEl = document.getElementById('orderStatus');
+            statusEl.innerText = currentSolicitacao.status || 'Pendente'; // Mostra o status do Trello (nome da lista)
+            statusEl.className = 'status-badge'; // Reseta classes
+            if (currentSolicitacao.status_interno === 'aguardando aprovação') {
+                statusEl.classList.add('status-yellow');
+            } else if (currentSolicitacao.status_interno === 'Aprovado') {
+                statusEl.classList.add('status-green');
+            } else {
+                statusEl.classList.add('status-blue');
+            }
+
+            // Preenche detalhes específicos
+            let detailsHtml = '';
+            if (currentSolicitacao.tipo_pedido === 'design') {
+                detailsHtml = `
+                    <p><strong>Data de Entrega:</strong> ${new Date(d.data_entrega_arte).toLocaleDateString('pt-BR')}</p>
+                    <p><strong>Uso e Objetivo:</strong> ${d.uso_e_objetivo_arte || 'N/A'}</p>
+                    <p><strong>Observações:</strong> ${d.observacoes_complementares || 'N/A'}</p>
+                `;
+            } else { // Vídeo
+                detailsHtml = `
+                    <p><strong>Data de Entrega:</strong> ${new Date(d.data_entrega_video).toLocaleDateString('pt-BR')}</p>
+                    <p><strong>Duração Estimada:</strong> ${d.tempo_duracao_video || 'N/A'}</p>
+                    <p><strong>Roteiro:</strong> ${d.roteiro_video || 'N/A'}</p>
+                `;
+            }
+            document.getElementById('orderSpecificDetails').innerHTML = detailsHtml;
+
+            // Verifica se o modal de aprovação deve ser exibido com base no STATUS INTERNO
+            if (currentSolicitacao.status_interno === 'aguardando aprovação') {
+                document.getElementById('approvalModal').classList.remove('hidden');
+            }
+        }
+
+        function showDisapprovalForm() {
+            document.getElementById('initialActions').classList.add('hidden');
+            document.getElementById('disapprovalForm').classList.remove('hidden');
+        }
+
+        function hideDisapprovalForm() {
+            document.getElementById('disapprovalForm').classList.add('hidden');
+            document.getElementById('initialActions').classList.remove('hidden');
+            clearError('disapprovalReason');
+        }
+
+        async function approveRequest() {
+            if (!confirm('Tem certeza que deseja APROVAR esta entrega?')) return;
+
+            try {
+                const response = await fetch(APPROVE_WEBHOOK_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        trello_card_id: currentSolicitacao.trello_card_id,
+                        solicitacao_id: currentSolicitacao.id, // <-- ADICIONADO
+                        tipo_pedido: currentSolicitacao.tipo_pedido // <-- ADICIONADO
+                    }),
+                });
+
+                if (!response.ok) throw new Error('Falha na comunicação com o webhook.');
+
+                alert('Solicitação aprovada com sucesso! A equipe foi notificada.');
+                document.getElementById('approvalModal').classList.add('hidden');
+
+                // Atualiza o status na tela para feedback imediato
+                const statusEl = document.getElementById('orderStatus');
+                statusEl.innerText = 'Aprovado pelo Cliente';
+                statusEl.className = 'status-badge status-green';
+            } catch (error) {
+                console.error('Erro ao aprovar:', error);
+                alert('Ocorreu um erro ao tentar aprovar. Por favor, tente novamente.');
+            }
+        }
+
+        async function sendDisapproval() {
+            clearError('disapprovalReason');
+            const reason = document.getElementById('disapprovalReason').value.trim();
+
+            if (!reason) {
+                addError('disapprovalReason', 'Por favor, descreva o motivo da reprovação.');
+                return;
+            }
+
+            try {
+                const response = await fetch(DISAPPROVE_WEBHOOK_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        trello_card_id: currentSolicitacao.trello_card_id,
+                        motivo_reprovacao: reason,
+                        solicitante: currentSolicitacao.nome
+                    }),
+                });
+
+                if (!response.ok) throw new Error('Falha na comunicação com o webhook de reprovação.');
+
+                alert('Sua solicitação de ajuste foi enviada! A equipe irá analisar e trabalhar nas alterações.');
+                document.getElementById('approvalModal').classList.add('hidden');
+
+                // Atualiza o status na tela para feedback imediato
+                const statusEl = document.getElementById('orderStatus');
+                statusEl.innerText = 'Em Ajuste';
+                statusEl.className = 'status-badge status-yellow';
+            } catch (error) {
+                console.error('Erro ao reprovar:', error);
+                alert('Erro ao enviar os ajustes. Tente novamente.');
+            }
+        }
+    </script>
+</body>
+
+</html>

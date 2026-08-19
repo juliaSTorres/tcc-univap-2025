@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Detalhes do seu Pedido</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"
+        rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        :root {
+            --color-bg-primary: #f8fafc;
+            --color-green-action: #22c55e;
+            --color-green-dark: #16a34a;
+            --color-yellow-action: #f59e0b;
+            --color-yellow-dark: #d97706;
+            --color-red-danger: #ef4444;
+            --color-blue-link: #3b82f6;
+            --color-text-dark: #1f2937;
+            --color-text-medium: #4b5563;
+            --color-border: #d1d5db;
+            --color-card-bg: #ffffff;
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--color-bg-primary);
+            color: var(--color-text-dark);
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+            padding: 2rem 1rem;
+        }
+
+        .container {
+            background-color: var(--color-card-bg);
+            padding: 2.5rem;
+            border-radius: 1rem;
+            box-shadow: var(--shadow-lg);
+            width: 100%;
+            max-width: 48rem;
+            text-align: left;
+        }
+
+        h1 {
+            font-size: 2.2rem;
+            font-weight: 800;
+            color: var(--color-text-dark);
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+
+        h2 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--color-text-dark);
+            margin-bottom: 1rem;
+        }
+
+        .info-item {
+            margin-bottom: 0.75rem;
+            line-height: 1.5;
+        }
+
+        .info-item strong {
+            color: var(--color-text-dark);
+            font-weight: 600;
+            margin-right: 0.5rem;
+        }
+
+        .info-item span {
+            color: var(--color-text-medium);
+        }
+
+        .details-section {
+            border: 1px solid var(--color-border);
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            margin-top: 1.5rem;
+            background-color: #fcfcfc;
+            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.05);
+        }
+
+        .break-all-words {
+            word-break: break-word;
+            overflow-wrap: break-word;
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.75rem;
+            font-weight: 600;
+            transition: background-color 0.2s ease, transform 0.1s ease;
+            white-space: nowrap;
+            width: 100%;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-primary {
+            background-color: var(--color-green-action);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--color-green-dark);
+        }
+
+        .btn-danger {
+            background-color: var(--color-red-danger);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background-color: #c02626;
+        }
+
+        .btn-warning {
+            background-color: var(--color-yellow-action);
+            color: white;
+        }
+
+        .btn-warning:hover {
+            background-color: var(--color-yellow-dark);
+        }
+
+        .btn-secondary {
+            background-color: #6b7280;
+            color: white;
+            margin-top: 2rem;
+            display: inline-block;
+            width: auto;
+        }
+
+        .btn-secondary:hover {
+            background-color: #4b5563;
+        }
+
+        .status-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-weight: 600;
+            font-size: 0.875rem;
+        }
+
+        .status-green {
+            background-color: #dcfce7;
+            color: #166534;
+        }
+
+        .status-yellow {
+            background-color: #fef9c3;
+            color: #854d0e;
+        }
+
+        .status-blue {
+            background-color: #dbeafe;
+            color: #1e40af;
+        }
+
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background-color: rgba(0, 0, 0, 0.6);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 50;
+        }
+
+        .modal-content {
+            background-color: white;
+            padding: 2rem;
+            border-radius: 0.75rem;
+            max-width: 32rem;
+            width: 100%;
+            text-align: center;
+        }
+
+        .form-textarea {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 1px solid var(--color-border);
+            border-radius: 0.5rem;
+            background-color: #f9fafb;
+            color: var(--color-text-dark);
+        }
+
+        .error-message {
+            color: var(--color-red-danger);
+            font-size: 0.875rem;
+            margin-top: 0.25rem;
+            text-align: left;
+            display: none;
+        }
+
+        .error-message.active {
+            display: block;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1 id="pedidoTitle">Detalhes do Pedido</h1>
+
+        <div id="orderDetails">
+        </div>
+
+        <div class="text-center">
+            <button class="btn btn-secondary" onclick="window.location.href='cliente_rastreamento.html'">Fazer Nova
+                Consulta</button>
+        </div>
+    </div>
+
+    <div id="approvalModal" class="modal-overlay hidden">
+        <div class="modal-content">
+            <h2 class="text-2xl font-bold mb-4">Aprovação Necessária</h2>
+            <p class="mb-6 text-gray-600">Sua solicitação foi finalizada pela nossa equipe. Por favor, revise o material
+                e escolha uma das opções abaixo.</p>
+
+            <div id="initialActions" class="flex gap-4">
+                <button onclick="showDisapprovalForm()" class="btn btn-danger">Reprovar e Pedir Ajuste</button>
+                <button onclick="approveRequest()" class="btn btn-primary">Aprovar Entrega</button>
+            </div>
+
+            <div id="disapprovalForm" class="hidden">
+                <label for="disapprovalReason" class="form-label text-left">Descreva em detalhes os ajustes
+                    necessários:</label>
+                <textarea id="disapprovalReason" class="form-textarea" rows="4"
+                    placeholder="Ex: Por favor, alterar a cor do título para azul..."></textarea>
+                <span id="disapprovalReason-error" class="error-message"></span>
+                <div class="flex gap-4 mt-4">
+                    <button onclick="hideDisapprovalForm()"
+                        class="btn bg-gray-300 hover:bg-gray-400 text-gray-800">Voltar</button>
+                    <button onclick="sendDisapproval()" class="btn btn-warning">Enviar para Ajuste</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ==========================================================
+        // !! CONFIGURE SEUS WEBHOOKS AQUI !!
+        // ==========================================================
+        const APPROVE_WEBHOOK_URL = 'https://[SEU_LINK_N8N]/webhook/approve-solicitacao';
+        const DISAPPROVE_WEBHOOK_URL = 'https://[SEU_LINK_N8N]/webhook/request-adjustment';
+        // ==========================================================
+
+        let currentSolicitacao = null; // Armazena a solicitação atual
+
+        function addError(fieldId, message) {
+            const el = document.getElementById(fieldId);
+            const errorEl = document.getElementById(fieldId + '-error');
+            if (el && errorEl) {
+                el.classList.add('border-red-500');
+                errorEl.innerText = message;
+                errorEl.classList.add('active');
+            }
+        }
+
+        function clearError(fieldId) {
+            const el = document.getElementById(fieldId);
+            const errorEl = document.getElementById(fieldId + '-error');
+            if (el && errorEl) {
+                el.classList.remove('border-red-500');
+                errorEl.classList.remove('active');
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const storedSolicitacao = sessionStorage.getItem('currentClientSolicitacao');
+
+            if (!storedSolicitacao) {
+                document.getElementById('orderDetails').innerHTML = '<p class="text-red-500 text-center">Nenhum detalhe de pedido encontrado. Por favor, volte e insira seu código.</p>';
+                document.getElementById('pedidoTitle').innerText = 'Erro ao Carregar Pedido';
+                return;
+            }
+
+            currentSolicitacao = JSON.parse(storedSolicitacao);
+            renderOrderDetails(currentSolicitacao);
+        });
+
+        function renderOrderDetails(solicitacao) {
+            const orderDetailsContainer = document.getElementById('orderDetails');
+            const dataCriacao = solicitacao.data_criacao ? new Date(solicitacao.data_criacao).toLocaleDateString('pt-BR', { year: 'numeric', month: '2-digit', day: '2-digit' }) : 'N/A';
+
+            let statusClass = 'status-blue';
+            if (solicitacao.status_interno === 'aguardando aprovação') statusClass = 'status-yellow';
+            else if (solicitacao.status_interno === 'Aprovado') statusClass = 'status-green';
+
+            let mainDetailsHtml = `
+                <div class="info-item"><strong>Solicitante:</strong> <span>${solicitacao.nome || 'N/A'}</span></div>
+                <div class="info-item"><strong>Ministério:</strong> <span>${solicitacao.ministerio || 'N/A'}</span></div>
+                <div class="info-item"><strong>Tipo de Pedido:</strong> <span>${(solicitacao.tipo_pedido ? solicitacao.tipo_pedido.charAt(0).toUpperCase() + solicitacao.tipo_pedido.slice(1) : 'N/A')}</span></div>
+                <div class="info-item"><strong>Status Trello:</strong> <span id="status" class="status-badge ${statusClass}">${(solicitacao.status ? solicitacao.status.charAt(0).toUpperCase() + solicitacao.status.slice(1) : 'Pendente')}</span></div>
+                <div class="info-item"><strong>Data de Criação:</strong> <span>${dataCriacao}</span></div>
+                <div class="info-item"><strong>Telefone:</strong> <span>${formatPhoneNumber(solicitacao.numero_cliente) || 'N/A'}</span></div>
+                <div class="info-item"><strong>Email:</strong> <span>${solicitacao.email_cliente || 'N/A'}</span></div>
+            `;
+
+            let specificDetailsHtml = '';
+            if (solicitacao.tipo_pedido === 'design') {
+                const detalhes = solicitacao.detalhes_solicitacao;
+                specificDetailsHtml += `<div class="info-item break-all-words"><strong>Texto Fundamental:</strong> <span>${detalhes.texto_fundamental || 'N/A'}</span></div>`;
+                specificDetailsHtml += `<div class="info-item break-all-words"><strong>Data do Evento:</strong> <span>${detalhes.data_evento ? new Date(detalhes.data_evento).toLocaleDateString('pt-BR') : 'N/A'}</span></div>`;
+                specificDetailsHtml += `<div class="info-item break-all-words"><strong>Observações:</strong> <span>${detalhes.observacoes_complementares || 'N/A'}</span></div>`;
+                if (detalhes.imagem_referencia) {
+                    specificDetailsHtml += `<img src="${detalhes.imagem_referencia}" class="mt-4 max-w-full rounded-lg shadow-md" alt="Imagem de Referência" />`;
+                }
+            } else if (solicitacao.tipo_pedido === 'video') {
+                const detalhes = solicitacao.detalhes_solicitacao;
+                specificDetailsHtml += `<div class="info-item break-all-words"><strong>Título do Vídeo:</strong> <span>${detalhes.titulo_video || 'N/A'}</span></div>`;
+                specificDetailsHtml += `<div class="info-item break-all-words"><strong>Duração:</strong> <span>${detalhes.tempo_duracao_video || 'N/A'}</span></div>`;
+                specificDetailsHtml += `<div class="info-item break-all-words"><strong>Roteiro:</strong> <span>${detalhes.roteiro_video || 'N/A'}</span></div>`;
+            }
+
+            orderDetailsContainer.innerHTML = `
+                ${mainDetailsHtml}
+                <div class="details-section">
+                    <h2>Detalhes Específicos</h2>
+                    ${specificDetailsHtml}
+                </div>
+            `;
+
+            // Mostra o modal se o status interno for o correto
+            if (solicitacao.status_interno === 'aguardando aprovação') {
+                document.getElementById('approvalModal').classList.remove('hidden');
+            }
+        }
+
+        function formatPhoneNumber(phoneNumber) {
+            if (!phoneNumber) return 'N/A';
+            const cleaned = ('' + phoneNumber).replace(/\D/g, '');
+            const match = cleaned.match(/^(\d{2})(\d{5})(\d{4})$/);
+            if (match) return `(${match[1]}) ${match[2]}-${match[3]}`;
+            return cleaned;
+        }
+
+        function showDisapprovalForm() {
+            document.getElementById('initialActions').classList.add('hidden');
+            document.getElementById('disapprovalForm').classList.remove('hidden');
+        }
+
+        function hideDisapprovalForm() {
+            document.getElementById('disapprovalForm').classList.add('hidden');
+            document.getElementById('initialActions').classList.remove('hidden');
+            clearError('disapprovalReason');
+        }
+
+        async function approveRequest() {
+            if (!confirm('Tem certeza que deseja APROVAR esta entrega?')) return;
+
+            try {
+                const response = await fetch(APPROVE_WEBHOOK_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ trello_card_id: currentSolicitacao.trello_card_id }),
+                });
+                if (!response.ok) throw new Error('Falha no webhook.');
+
+                alert('Solicitação aprovada com sucesso!');
+                document.getElementById('approvalModal').classList.add('hidden');
+
+                // Atualiza o status na tela para feedback imediato
+                const statusEl = document.getElementById('status');
+                statusEl.innerText = 'Aprovado pelo Cliente';
+                statusEl.className = 'status-badge status-green';
+            } catch (error) {
+                alert('Ocorreu um erro ao aprovar. Tente novamente.');
+            }
+        }
+
+        async function sendDisapproval() {
+            clearError('disapprovalReason');
+            const reason = document.getElementById('disapprovalReason').value.trim();
+
+            if (!reason) {
+                addError('disapprovalReason', 'Por favor, descreva os ajustes necessários.');
+                return;
+            }
+
+            try {
+                const response = await fetch(DISAPPROVE_WEBHOOK_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        trello_card_id: currentSolicitacao.trello_card_id,
+                        motivo_reprovacao: reason,
+                        solicitante: currentSolicitacao.nome
+                    }),
+                });
+                if (!response.ok) throw new Error('Falha no webhook.');
+
+                alert('Sua solicitação de ajuste foi enviada!');
+                document.getElementById('approvalModal').classList.add('hidden');
+
+                // Atualiza o status na tela para feedback imediato
+                const statusEl = document.getElementById('status');
+                statusEl.innerText = 'Em Ajuste';
+                statusEl.className = 'status-badge status-yellow';
+            } catch (error) {
+                alert('Ocorreu um erro ao enviar o pedido de ajuste. Tente novamente.');
+            }
+        }
+    </script>
+</body>
+
+</html>

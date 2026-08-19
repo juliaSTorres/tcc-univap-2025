@@ -1,0 +1,79 @@
+-- Desativa a verificação de chaves estrangeiras temporariamente para evitar erros
+-- durante a criação e alteração de tabelas com dependências, caso existam dados.
+SET FOREIGN_KEY_CHECKS = 0;
+
+-- Criação do Banco de Dados
+CREATE DATABASE IF NOT EXISTS solicitacoes_db CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+USE solicitacoes_db;
+
+-- Tabela de Clientes
+-- Informações do solicitante/cliente
+CREATE TABLE IF NOT EXISTS clientes (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nome VARCHAR(255) NOT NULL,
+    numero_cliente VARCHAR(50) UNIQUE NOT NULL, -- Número único para o cliente
+    email_cliente VARCHAR(255) UNIQUE NOT NULL, -- Email único para o cliente
+    data_cadastro TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- Tabela de Solicitações de Design
+CREATE TABLE IF NOT EXISTS solicitacoes_design (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    cliente_id INT NOT NULL, -- Chave estrangeira para a tabela de clientes
+    ministerio VARCHAR(100) NOT NULL,
+    -- Alterado de ENUM para VARCHAR(255) para permitir nomes de lista do Trello
+    status VARCHAR(255) DEFAULT 'pendente',
+    texto_fundamental TEXT,
+    data_evento DATETIME,
+    data_entrega_arte DATETIME NOT NULL,
+    uso_e_objetivo_arte TEXT,
+    publico_alcancado TEXT,
+    imagem_referencia VARCHAR(255), -- Para armazenar o link da imagem de referência
+    formatos_entrega TEXT, -- Armazenar como string JSON ou texto separado por vírgulas
+    arquivos_necessarios TEXT, -- Armazenar como string JSON ou texto separado por vírgulas
+    email_aprovacao_orcamento VARCHAR(255),
+    link_qr_code VARCHAR(255),
+    observacoes_complementares TEXT,
+    data_criacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    -- Novos campos para motivo e observação de rejeição
+    motivo_rejeicao VARCHAR(255) DEFAULT NULL,
+    observacao_rejeicao TEXT DEFAULT NULL,
+    -- Novo campo para armazenar o ID do card do Trello
+    trello_card_id VARCHAR(255) NULL,
+    FOREIGN KEY (cliente_id) REFERENCES clientes(id) ON DELETE CASCADE
+) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- Tabela de Solicitações de Vídeo
+CREATE TABLE IF NOT EXISTS solicitacoes_video (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    cliente_id INT NOT NULL, -- Chave estrangeira para a tabela de clientes
+    ministerio VARCHAR(100) NOT NULL,
+    -- Alterado de ENUM para VARCHAR(255) para permitir nomes de lista do Trello
+    status VARCHAR(255) DEFAULT 'pendente',
+    titulo_video VARCHAR(255) NOT NULL,
+    tempo_duracao_video VARCHAR(100), -- Ex: "1 minuto e 30 segundos"
+    onde_passara_video TEXT,
+    data_entrega_video DATETIME NOT NULL,
+    referencia_video VARCHAR(255),
+    publico_alvo_video TEXT,
+    fonte_imagens VARCHAR(255), -- Ex: "Captação" ou "Acervo"
+    roteiro_video TEXT,
+    data_criacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    -- Novos campos para motivo e observação de rejeição
+    motivo_rejeicao VARCHAR(255) DEFAULT NULL,
+    observacao_rejeicao TEXT DEFAULT NULL,
+    -- Novo campo para armazenar o ID do card do Trello
+    trello_card_id VARCHAR(255) NULL,
+    FOREIGN KEY (cliente_id) REFERENCES clientes(id) ON DELETE CASCADE
+) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- Tabela para o Dashboard (Opcional - se precisar armazenar métricas que não são puramente contagens)
+CREATE TABLE IF NOT EXISTS dashboard_metrics (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    metric_name VARCHAR(100) UNIQUE NOT NULL,
+    metric_value INT NOT NULL,
+    last_updated TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- Reativa a verificação de chaves estrangeiras
+SET FOREIGN_KEY_CHECKS = 1;
